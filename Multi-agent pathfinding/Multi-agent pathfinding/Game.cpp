@@ -11,7 +11,7 @@ Game::Game() :
 {
 	time = 0;
 	oldTime = 0;
-	aHandler.setPattern(MovePatterns::straightForward);
+	aHandler.setPattern(MovePatterns::numberAdjacent);
 
 	setupFontAndText(); 
 	setupWorldAndAgents();
@@ -53,14 +53,31 @@ void Game::processEvents()
 		}
 		if (sf::Event::KeyReleased == newEvent.type) //user pressed a key
 		{
+			processKeysRelease(newEvent);
+		}
+		if (sf::Event::KeyPressed == newEvent.type) //user pressed a key
+		{
 			processKeys(newEvent);
 		}
 	}
 }
 
-void Game::processKeys(sf::Event t_event)
+void Game::processKeysRelease(sf::Event t_event)
 {
 	if (sf::Keyboard::Space == t_event.key.code)
+	{
+		time++;
+		m_timeText.setString(std::to_string(time));
+	}
+	if (sf::Keyboard::R == t_event.key.code)
+	{
+		setupWorldAndAgents();
+	}
+}
+
+void Game::processKeys(sf::Event t_event)
+{
+	if (sf::Keyboard::P == t_event.key.code)
 	{
 		time++;
 		m_timeText.setString(std::to_string(time));
@@ -121,9 +138,29 @@ void Game::setupWorldAndAgents()
 		}
 	}
 	
-	aHandler.agentNumber[0].setUp(sf::Vector2i(5,5), sf::Vector2i(7, 15), &m_ArialBlackfont, 0);
+	aHandler.agentNumber[0].setUp(sf::Vector2i(5,4), sf::Vector2i(7, 15), &m_ArialBlackfont, 0);
 	aHandler.agentNumber[1].setUp(sf::Vector2i(5, 15), sf::Vector2i(15, 15), &m_ArialBlackfont, 1);
-	aHandler.agentNumber[2].setUp(sf::Vector2i(15, 5), sf::Vector2i(5, 15), &m_ArialBlackfont, 2);
-	aHandler.agentNumber[3].setUp(sf::Vector2i(0, 0), sf::Vector2i(22, 15), &m_ArialBlackfont, 3);
-	aHandler.agentNumber[4].setUp(sf::Vector2i(0, 15), sf::Vector2i(22, 0), &m_ArialBlackfont, 4);
+	aHandler.agentNumber[2].setUp(sf::Vector2i(5, 9), sf::Vector2i(5, 0), &m_ArialBlackfont, 2);
+	aHandler.agentNumber[3].setUp(sf::Vector2i(0, 0), sf::Vector2i(22, 0), &m_ArialBlackfont, 3);
+	aHandler.agentNumber[4].setUp(sf::Vector2i(0, 15), sf::Vector2i(22, 15), &m_ArialBlackfont, 4);
+	aHandler.agentNumber[5].setUp(sf::Vector2i(20,9), sf::Vector2i(22, 5), &m_ArialBlackfont, 5);
+	aHandler.agentNumber[6].setUp(sf::Vector2i(17,2), sf::Vector2i(12, 5), &m_ArialBlackfont, 6);
+	aHandler.agentNumber[7].setUp(sf::Vector2i(0, 5), sf::Vector2i(22, 1), &m_ArialBlackfont, 7);
+	aHandler.agentNumber[8].setUp(sf::Vector2i(20, 8), sf::Vector2i(2, 15), &m_ArialBlackfont, 8);
+	aHandler.agentNumber[9].setUp(sf::Vector2i(2, 2), sf::Vector2i(10, 15), &m_ArialBlackfont, 9);
+
+	aHandler.worldBlocks[3][15].passable = false;
+	aHandler.worldBlocks[3][14].passable = false;
+
+	aHandler.worldBlocks[4][4].passable = false;
+	aHandler.worldBlocks[4][5].passable = false;
+	aHandler.worldBlocks[4][6].passable = false;
+	aHandler.worldBlocks[4][7].passable = false;
+	aHandler.worldBlocks[4][8].passable = false;
+	aHandler.worldBlocks[6][4].passable = false;
+	aHandler.worldBlocks[6][5].passable = false;
+	aHandler.worldBlocks[6][6].passable = false;
+	aHandler.worldBlocks[6][7].passable = false;
+	aHandler.worldBlocks[6][8].passable = false;
+	aHandler.worldBlocks[5][3].passable = false;
 }

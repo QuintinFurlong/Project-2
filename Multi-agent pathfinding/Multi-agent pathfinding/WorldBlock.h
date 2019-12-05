@@ -5,4 +5,5 @@ class WorldBlock
 public:
 	sf::RectangleShape square;
 	bool passable;
+	int disToGoal;
 };

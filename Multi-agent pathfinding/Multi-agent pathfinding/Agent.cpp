@@ -4,10 +4,8 @@ Agent::Agent()
 {
 	body.setFillColor(sf::Color::Red);
 	body.setSize(sf::Vector2f(50, 50));
-	body.setPosition(0,25);
 	goal.setFillColor(sf::Color(80,80,255));
 	goal.setSize(sf::Vector2f(50, 50));
-	goal.setPosition(50, 25);
 
 	currentText.setCharacterSize(35);
 	currentText.setFillColor(sf::Color::Black);
@@ -19,8 +17,9 @@ void Agent::setUp(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, in
 {
 	current = t_start;
 	endGoal = t_end;
-	body.move((t_start.x + 1) * 100, (t_start.y + 1) * 100);
-	goal.move((t_end.x + 1) * 100, (t_end.y + 1) * 100);
+	body.setPosition((t_start.x + 1) * 100, ((t_start.y + 1) * 100) + 25);
+	goal.setPosition((t_end.x + 1) * 100, (t_end.y + 1) * 100);
+	goal.move(50, 25);
 
 	currentText.setFont(*t_font);
 	currentText.setString(std::to_string(index));

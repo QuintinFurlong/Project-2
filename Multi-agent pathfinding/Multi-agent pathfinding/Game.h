@@ -25,7 +25,8 @@ public:
 
 private:
 
-	void processEvents();
+	void processEvents(); 
+	void processKeysRelease(sf::Event t_event);
 	void processKeys(sf::Event t_event);
 	void update(sf::Time t_deltaTime);
 	void render();

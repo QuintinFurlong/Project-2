@@ -2,18 +2,19 @@
 #include <SFML/Graphics.hpp>
 #include "Agent.h"
 #include "WorldBlock.h"
+#include <iostream>
 
 enum MovePatterns
 {
-	straightForward,
-	two, 
-	three
+	straightForward,//moves right/left till same column then up/down till same block
+	stairs, 
+	numberAdjacent
 };
 
 class MultiAgentHandler
 {
 public:
-	static const int MAX_AGENTS = 5;
+	static const int MAX_AGENTS = 10;
 	Agent agentNumber[MAX_AGENTS];
 	static const int WORLD_WIDTH = 24;
 	static const int WORLD_HEIGHT = 16;
@@ -25,6 +26,11 @@ public:
 	void setPattern(MovePatterns t_move);
 	void moveAgents();
 	void draw(sf::RenderWindow& t_window);
-	void simpleMovement();
+
+	void straightForwFunc();
+	void stairsFunc();
+	void adjacentFunc();
+	void simpleCheckVert(int index);
+	void simpleCheckHorz(int index);
 	void moveSingleAgent(int t_index);
 };
