@@ -1,4 +1,7 @@
 ﻿  Game.cpp
-C:\Users\Quintin Furlong\source\repos\Multi-agent pathfinding\Multi-agent pathfinding\Game.cpp(17,71): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Quintin Furlong\source\repos\Multi-agent pathfinding\Multi-agent pathfinding\Game.cpp(17,52): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  Multi-agent pathfinding.vcxproj -> C:\Users\Quintin Furlong\source\repos\Multi-agent pathfinding\Debug\Multi-agent pathfinding.exe
+C:\Users\Quintin Furlong\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Game.cpp(115,91): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Multi-agentHandler.cpp
+  main.cpp
+  Generating Code...
+C:\Users\Quintin Furlong\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Game.cpp(115,71): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Multi-agent pathfinding.vcxproj -> C:\Users\Quintin Furlong\Documents\GitHub\Project-2\Multi-agent pathfinding\Debug\Multi-agent pathfinding.exe

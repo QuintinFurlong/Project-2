@@ -10,6 +10,8 @@
 /// Don't forget the endif at the bottom
 /// </summary>
 #include <SFML/Graphics.hpp>
+#include "WorldBlock.h"
+#include "Multi-agentHandler.h"
 
 class Game
 {
@@ -29,13 +31,14 @@ private:
 	void render();
 	
 	void setupFontAndText();
+	void setupWorldAndAgents();
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
-	sf::Text m_welcomeMessage; // text used for message on screen
-	static const int WORLD_WIDTH = 24;
-	static const int WORLD_HEIGHT = 16;
-	sf::RectangleShape worldBlocks [WORLD_WIDTH][WORLD_HEIGHT];
+	sf::Text m_timeText; // text used for message on screen
+	int time, oldTime;
+
+	MultiAgentHandler aHandler;
 	bool m_exitGame; // control exiting game
 
 };

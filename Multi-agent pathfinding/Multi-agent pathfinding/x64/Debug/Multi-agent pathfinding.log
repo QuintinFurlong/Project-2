@@ -1,0 +1,9 @@
+﻿  Agent.cpp
+  Game.cpp
+C:\Users\Quintin Furlong\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Agent.h(2,10): fatal error C1083: Cannot open include file: 'SFML/Graphics.hpp': No such file or directory
+  main.cpp
+C:\Users\Quintin Furlong\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Game.h(12,10): fatal error C1083: Cannot open include file: 'SFML/Graphics.hpp': No such file or directory
+  Multi-agentHandler.cpp
+C:\Users\Quintin Furlong\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Game.h(12,10): fatal error C1083: Cannot open include file: 'SFML/Graphics.hpp': No such file or directory
+  Generating Code...
+C:\Users\Quintin Furlong\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.h(2,10): fatal error C1083: Cannot open include file: 'SFML/Graphics.hpp': No such file or directory
