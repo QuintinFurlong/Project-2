@@ -106,36 +106,36 @@ void MultiAgentHandler::adjacentFunc()
 			{
 				for (int height = 0; height < WORLD_HEIGHT; height++)
 				{
-					worldBlocks[width][height].disToGoal = 999;
+					worldBlocks[width][height].disToGoal = 999;//sets distance to goal higher then can ever be
 				}
 			}
-			worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;
-			worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].disToGoal = 0;
-			int currentDis = 0;
-			while (currentDis < worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal)
+			worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;//current spot is free
+			worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].disToGoal = 0;//set goal to zero to base the rest of spots off
+			int currentDis = 0;//active distance we are dealing with
+			while (currentDis < worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal)//true if start is larger then current distance
 			{
 				for (int width = 0; width < WORLD_WIDTH; width++)
 				{
 					for (int height = 0; height < WORLD_HEIGHT; height++)
 					{
-						if (worldBlocks[width][height].disToGoal == currentDis)
+						if (worldBlocks[width][height].disToGoal == currentDis)//true for spots at the current distance from goal
 						{
-							if (width != WORLD_WIDTH - 1 && worldBlocks[width + 1][height].disToGoal > currentDis && 
-								worldBlocks[width + 1][height].passable)
+							if (width != WORLD_WIDTH - 1 && worldBlocks[width + 1][height].disToGoal > currentDis && //true if not on the right edge + true if right block is marked further then current
+								worldBlocks[width + 1][height].passable)//true if right isn't blocked
 							{
-								worldBlocks[width + 1][height].disToGoal = currentDis + 1;
+								worldBlocks[width + 1][height].disToGoal = currentDis + 1;//sets right to 1 longer then active
 							}
-							if (width != 0 && worldBlocks[width - 1][height].disToGoal > currentDis&&
+							if (width != 0 && worldBlocks[width - 1][height].disToGoal > currentDis&&//same as before but for left side
 								worldBlocks[width - 1][height].passable)
 							{
 								worldBlocks[width - 1][height].disToGoal = currentDis + 1;
 							}
-							if (height != WORLD_HEIGHT - 1 && worldBlocks[width][height + 1].disToGoal > currentDis&&
+							if (height != WORLD_HEIGHT - 1 && worldBlocks[width][height + 1].disToGoal > currentDis&&//same as before but for the bottom
 								worldBlocks[width][height + 1].passable)
 							{
 								worldBlocks[width][height + 1].disToGoal = currentDis + 1;
 							}
-							if (height != 0 && worldBlocks[width][height - 1].disToGoal > currentDis&&
+							if (height != 0 && worldBlocks[width][height - 1].disToGoal > currentDis&&//same as before but for the top
 								worldBlocks[width][height - 1].passable)
 							{
 								worldBlocks[width][height - 1].disToGoal = currentDis + 1;
@@ -143,10 +143,10 @@ void MultiAgentHandler::adjacentFunc()
 						}
 					}
 				}
-				currentDis++;
+				currentDis++;//expand on the spots that have just been expanded
 			}
-			worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;
-			if (agentNumber[i].current.x != WORLD_WIDTH - 1 && worldBlocks[agentNumber[i].current.x + 1][agentNumber[i].current.y].disToGoal < 999)
+			worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//the spot the agent is on is blocked
+			if (agentNumber[i].current.x != WORLD_WIDTH - 1 && worldBlocks[agentNumber[i].current.x + 1][agentNumber[i].current.y].disToGoal < 999)//true if not on right side + possible path exists
 			{
 				agentNumber[i].currentDirection = Direction::right;
 			}
@@ -197,8 +197,8 @@ void MultiAgentHandler::simpleCheckHorz(int i)
 
 void MultiAgentHandler::moveSingleAgent(int t_index)
 {
-	worldBlocks[agentNumber[t_index].current.x][agentNumber[t_index].current.y].passable = true;
-	switch (agentNumber[t_index].currentDirection)
+	worldBlocks[agentNumber[t_index].current.x][agentNumber[t_index].current.y].passable = true;//current spot is free
+	switch (agentNumber[t_index].currentDirection)//moves agent based off decided direction
 	{
 	case right:
 		agentNumber[t_index].current.x++;
@@ -217,6 +217,12 @@ void MultiAgentHandler::moveSingleAgent(int t_index)
 	default:
 		break;
 	}
-	worldBlocks[agentNumber[t_index].current.x][agentNumber[t_index].current.y].passable = false;
-	agentNumber[t_index].setPos();
+	worldBlocks[agentNumber[t_index].current.x][agentNumber[t_index].current.y].passable = false;//new current spot is blocked
+	agentNumber[t_index].setPos();//sets agent off current
+}
+
+void MultiAgentHandler::setUpAgent(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, int index)
+{
+	agentNumber[index].setUp(t_start, t_end, t_font, index);
+	worldBlocks[t_start.x][t_start.y].passable = false;
 }

@@ -7,8 +7,8 @@
 enum MovePatterns
 {
 	straightForward,//moves right/left till same column then up/down till same block
-	stairs, 
-	numberAdjacent
+	stairs, //moves right/left if can't then up/down till same block
+	numberAdjacent//Dijkstra's algorithm
 };
 
 class MultiAgentHandler
@@ -33,4 +33,5 @@ public:
 	void simpleCheckVert(int index);
 	void simpleCheckHorz(int index);
 	void moveSingleAgent(int t_index);
+	void setUpAgent(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, int index);
 };

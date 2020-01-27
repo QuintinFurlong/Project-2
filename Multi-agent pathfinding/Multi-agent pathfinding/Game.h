@@ -38,7 +38,7 @@ private:
 	sf::Font m_ArialBlackfont; // font used by message
 	sf::Text m_timeText; // text used for message on screen
 	int time, oldTime;
-
+	float newTime;
 	MultiAgentHandler aHandler;
 	bool m_exitGame; // control exiting game
 
