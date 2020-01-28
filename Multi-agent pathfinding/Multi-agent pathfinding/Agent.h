@@ -13,6 +13,7 @@ public:
 	sf::Vector2i current, endGoal, nextMove;
 	sf::Text currentText, endText;
 	Direction currentDirection;
+	std::vector<sf::Vector2i> path;
 
 	Agent();
 	void setUp(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, int index);

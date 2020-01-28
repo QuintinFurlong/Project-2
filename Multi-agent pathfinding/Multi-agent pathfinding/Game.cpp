@@ -12,7 +12,7 @@ Game::Game() :
 	time = 0;
 	oldTime = 0;
 	newTime = 0;
-	aHandler.setPattern(MovePatterns::numberAdjacent);
+	aHandler.setPattern(MovePatterns::recordedPath);
 
 	setupFontAndText(); 
 	setupWorldAndAgents();

@@ -24,7 +24,10 @@ void MultiAgentHandler::moveAgents()
 		stairsFunc();
 		break;
 	case numberAdjacent:
-		adjacentFunc();
+		adjacentFunc(false);
+		break;
+	case recordedPath:
+		adjacentFunc(true);
 		break;
 	default:
 		break;
@@ -96,7 +99,7 @@ void MultiAgentHandler::stairsFunc()
 	}
 }
 
-void MultiAgentHandler::adjacentFunc()
+void MultiAgentHandler::adjacentFunc(bool fullPath)
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
@@ -145,24 +148,64 @@ void MultiAgentHandler::adjacentFunc()
 				}
 				currentDis++;//expand on the spots that have just been expanded
 			}
-			worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//the spot the agent is on is blocked
-			if (agentNumber[i].current.x != WORLD_WIDTH - 1 && worldBlocks[agentNumber[i].current.x + 1][agentNumber[i].current.y].disToGoal < 999)//true if not on right side + possible path exists
+			if (!fullPath)
 			{
-				agentNumber[i].currentDirection = Direction::right;
+				worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//the spot the agent is on is blocked
+				if (agentNumber[i].current.x != WORLD_WIDTH - 1 && worldBlocks[agentNumber[i].current.x + 1][agentNumber[i].current.y].disToGoal < 999)//true if not on right side + possible path marked
+				{
+					agentNumber[i].currentDirection = Direction::right;
+				}
+				else if (agentNumber[i].current.x != 0 && worldBlocks[agentNumber[i].current.x - 1][agentNumber[i].current.y].disToGoal < 999)
+				{
+					agentNumber[i].currentDirection = Direction::left;
+				}
+				else if (agentNumber[i].current.y != WORLD_HEIGHT - 1 && worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y + 1].disToGoal < 999)
+				{
+					agentNumber[i].currentDirection = Direction::down;
+				}
+				else if (agentNumber[i].current.x != 0 && worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y - 1].disToGoal < 999)
+				{
+					agentNumber[i].currentDirection = Direction::up;
+				}
+				moveSingleAgent(i);
 			}
-			else if (agentNumber[i].current.x != 0 && worldBlocks[agentNumber[i].current.x - 1][agentNumber[i].current.y].disToGoal < 999)
+			else
 			{
-				agentNumber[i].currentDirection = Direction::left;
+				sf::Vector2i currentBlock = agentNumber[i].current;
+				int distance = currentDis + 1;
+				sf::Vector2i goal = agentNumber[i].endGoal;
+				float bestDis = 99;
+				while (distance > 0)
+				{
+					for (int width = 0; width < WORLD_WIDTH; width++)
+					{
+						for (int height = 0; height < WORLD_HEIGHT; height++)
+						{
+							if (worldBlocks[width][height].disToGoal == distance - 1)
+							{
+								float currentDis = sqrt(pow((width - goal.x), 2) + pow((height - goal.y), 2));
+								if (currentDis < bestDis)
+								{
+									int index = worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal - distance;
+									if (agentNumber[i].path.size() <= index)
+									{
+										agentNumber[i].path.push_back(sf::Vector2i(width, height));
+									}
+									else
+									{
+										agentNumber[i].path.at(index) = sf::Vector2i(width, height);
+									}
+									
+									bestDis = currentDis;
+									currentBlock = sf::Vector2i(width, height);
+								}
+							}
+						}
+					}
+					distance--;
+				}
+
 			}
-			else if (agentNumber[i].current.y != WORLD_HEIGHT - 1 && worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y + 1].disToGoal < 999)
-			{
-				agentNumber[i].currentDirection = Direction::down;
-			}
-			else if (agentNumber[i].current.x != 0 && worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y - 1].disToGoal < 999)
-			{
-				agentNumber[i].currentDirection = Direction::up;
-			}
-			moveSingleAgent(i);
 		}
 	}
 }
