@@ -17,6 +17,7 @@ void Agent::setUp(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, in
 {
 	current = t_start;
 	endGoal = t_end;
+	path.clear();
 	body.setPosition((t_start.x + 1) * 100, ((t_start.y + 1) * 100) + 25);
 	goal.setPosition((t_end.x + 1) * 100, (t_end.y + 1) * 100);
 	goal.move(50, 25);

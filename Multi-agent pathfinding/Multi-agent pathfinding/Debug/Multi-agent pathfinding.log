@@ -1,4 +1,5 @@
-﻿  Multi-agentHandler.cpp
-C:\Users\Quintin Furlong\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(186,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Quintin Furlong\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(190,41): warning C4018: '<=': signed/unsigned mismatch
+﻿  Game.cpp
+C:\Users\Quintin Furlong\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Game.cpp(102,13): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Quintin Furlong\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Game.cpp(147,91): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Quintin Furlong\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Game.cpp(147,71): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   Multi-agent pathfinding.vcxproj -> C:\Users\Quintin Furlong\Documents\GitHub\Project-2\Multi-agent pathfinding\Debug\Multi-agent pathfinding.exe

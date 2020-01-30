@@ -49,7 +49,7 @@ void MultiAgentHandler::draw(sf::RenderWindow& t_window)
 	}
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;
+		//worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;
 		agentNumber[i].draw(t_window);
 	}
 }
@@ -103,7 +103,7 @@ void MultiAgentHandler::adjacentFunc(bool fullPath)
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		if (agentNumber[i].current != agentNumber[i].endGoal)//true if not at goal
+		if (agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() == 0)//true if not at goal
 		{
 			for (int width = 0; width < WORLD_WIDTH; width++)
 			{
@@ -115,39 +115,7 @@ void MultiAgentHandler::adjacentFunc(bool fullPath)
 			worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;//current spot is free
 			worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].disToGoal = 0;//set goal to zero to base the rest of spots off
 			int currentDis = 0;//active distance we are dealing with
-			while (currentDis < worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal)//true if start is larger then current distance
-			{
-				for (int width = 0; width < WORLD_WIDTH; width++)
-				{
-					for (int height = 0; height < WORLD_HEIGHT; height++)
-					{
-						if (worldBlocks[width][height].disToGoal == currentDis)//true for spots at the current distance from goal
-						{
-							if (width != WORLD_WIDTH - 1 && worldBlocks[width + 1][height].disToGoal > currentDis && //true if not on the right edge + true if right block is marked further then current
-								worldBlocks[width + 1][height].passable)//true if right isn't blocked
-							{
-								worldBlocks[width + 1][height].disToGoal = currentDis + 1;//sets right to 1 longer then active
-							}
-							if (width != 0 && worldBlocks[width - 1][height].disToGoal > currentDis&&//same as before but for left side
-								worldBlocks[width - 1][height].passable)
-							{
-								worldBlocks[width - 1][height].disToGoal = currentDis + 1;
-							}
-							if (height != WORLD_HEIGHT - 1 && worldBlocks[width][height + 1].disToGoal > currentDis&&//same as before but for the bottom
-								worldBlocks[width][height + 1].passable)
-							{
-								worldBlocks[width][height + 1].disToGoal = currentDis + 1;
-							}
-							if (height != 0 && worldBlocks[width][height - 1].disToGoal > currentDis&&//same as before but for the top
-								worldBlocks[width][height - 1].passable)
-							{
-								worldBlocks[width][height - 1].disToGoal = currentDis + 1;
-							}
-						}
-					}
-				}
-				currentDis++;//expand on the spots that have just been expanded
-			}
+			currentDis = numberGrid(currentDis, i);
 			if (!fullPath)
 			{
 				worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//the spot the agent is on is blocked
@@ -172,33 +140,51 @@ void MultiAgentHandler::adjacentFunc(bool fullPath)
 			else
 			{
 				sf::Vector2i currentBlock = agentNumber[i].current;
-				int distance = currentDis + 1;
+				int distance = currentDis;
 				sf::Vector2i goal = agentNumber[i].endGoal;
 				float bestDis = 99;
+				sf::Vector2i changeBlock = currentBlock;
+				sf::Vector2i checkBlock = changeBlock;
 				while (distance > 0)
 				{
-					for (int width = 0; width < WORLD_WIDTH; width++)
+					currentBlock = changeBlock;
+					for (int sides = 0; sides < 4; sides++)
 					{
-						for (int height = 0; height < WORLD_HEIGHT; height++)
+						checkBlock = currentBlock;
+						switch (sides)
 						{
-							if (worldBlocks[width][height].disToGoal == distance - 1)
+						case 0:
+							checkBlock.y--;
+							break;
+						case 1:
+							checkBlock.x--;
+							break;
+						case 2:
+							checkBlock.x++;
+							break;
+						case 3:
+							checkBlock.y++;
+							break;
+						}
+
+						if (checkBlock.x > -1 && checkBlock.x < WORLD_WIDTH && checkBlock.y > -1 && checkBlock.y < WORLD_HEIGHT &&
+							worldBlocks[checkBlock.x][checkBlock.y].disToGoal == distance - 1)
+						{
+							float currentDis = sqrt(pow((checkBlock.x - goal.x), 2) + pow((checkBlock.y - goal.y), 2));
+							if (currentDis < bestDis)
 							{
-								float currentDis = sqrt(pow((width - goal.x), 2) + pow((height - goal.y), 2));
-								if (currentDis < bestDis)
+								int index = worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal - distance;
+								if (agentNumber[i].path.size() <= index)
 								{
-									int index = worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal - distance;
-									if (agentNumber[i].path.size() <= index)
-									{
-										agentNumber[i].path.push_back(sf::Vector2i(width, height));
-									}
-									else
-									{
-										agentNumber[i].path.at(index) = sf::Vector2i(width, height);
-									}
-									
-									bestDis = currentDis;
-									currentBlock = sf::Vector2i(width, height);
+									agentNumber[i].path.push_back(sf::Vector2i(checkBlock.x, checkBlock.y));
 								}
+								else
+								{
+									agentNumber[i].path.at(index) = sf::Vector2i(checkBlock.x, checkBlock.y);
+								}
+
+								bestDis = currentDis;
+								changeBlock = sf::Vector2i(checkBlock.x, checkBlock.y);
 							}
 						}
 					}
@@ -206,6 +192,16 @@ void MultiAgentHandler::adjacentFunc(bool fullPath)
 				}
 
 			}
+		}
+		if(agentNumber[i].current != agentNumber[i].endGoal)
+		{
+			//worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;//current spot is fre
+			
+			agentNumber[i].current = agentNumber[i].path.front();
+			agentNumber[i].path.erase(agentNumber[i].path.begin());
+
+			//worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//new current spot is blocked
+			agentNumber[i].setPos();//sets agent off current
 		}
 	}
 }
@@ -267,5 +263,43 @@ void MultiAgentHandler::moveSingleAgent(int t_index)
 void MultiAgentHandler::setUpAgent(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, int index)
 {
 	agentNumber[index].setUp(t_start, t_end, t_font, index);
-	worldBlocks[t_start.x][t_start.y].passable = false;
+	//worldBlocks[t_start.x][t_start.y].passable = false;
+}
+
+int MultiAgentHandler::numberGrid(int currentDis, int i)
+{
+	while (currentDis < worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal)//true if start is larger then current distance
+	{
+		for (int width = 0; width < WORLD_WIDTH; width++)
+		{
+			for (int height = 0; height < WORLD_HEIGHT; height++)
+			{
+				if (worldBlocks[width][height].disToGoal == currentDis)//true for spots at the current distance from goal
+				{
+					if (width != WORLD_WIDTH - 1 && worldBlocks[width + 1][height].disToGoal > currentDis&& //true if not on the right edge + true if right block is marked further then current
+						worldBlocks[width + 1][height].passable)//true if right isn't blocked
+					{
+						worldBlocks[width + 1][height].disToGoal = currentDis + 1;//sets right to 1 longer then active
+					}
+					if (width != 0 && worldBlocks[width - 1][height].disToGoal > currentDis&&//same as before but for left side
+						worldBlocks[width - 1][height].passable)
+					{
+						worldBlocks[width - 1][height].disToGoal = currentDis + 1;
+					}
+					if (height != WORLD_HEIGHT - 1 && worldBlocks[width][height + 1].disToGoal > currentDis&&//same as before but for the bottom
+						worldBlocks[width][height + 1].passable)
+					{
+						worldBlocks[width][height + 1].disToGoal = currentDis + 1;
+					}
+					if (height != 0 && worldBlocks[width][height - 1].disToGoal > currentDis&&//same as before but for the top
+						worldBlocks[width][height - 1].passable)
+					{
+						worldBlocks[width][height - 1].disToGoal = currentDis + 1;
+					}
+				}
+			}
+		}
+		currentDis++;//expand on the spots that have just been expanded
+	}
+	return currentDis;
 }
