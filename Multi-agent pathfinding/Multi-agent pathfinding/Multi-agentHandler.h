@@ -30,7 +30,9 @@ public:
 
 	void straightForwFunc();
 	void stairsFunc();
-	void adjacentFunc(bool fullPath);
+	void adjacentFunc();
+	void adjacentPathFunc();
+	void findPath(int i);
 	void simpleCheckVert(int index);
 	void simpleCheckHorz(int index);
 	void moveSingleAgent(int t_index);

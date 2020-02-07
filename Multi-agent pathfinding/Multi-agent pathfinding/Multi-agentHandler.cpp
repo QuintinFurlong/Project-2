@@ -24,10 +24,10 @@ void MultiAgentHandler::moveAgents()
 		stairsFunc();
 		break;
 	case numberAdjacent:
-		adjacentFunc(false);
+		adjacentFunc();
 		break;
 	case recordedPath:
-		adjacentFunc(true);
+		adjacentPathFunc();
 		break;
 	default:
 		break;
@@ -99,7 +99,7 @@ void MultiAgentHandler::stairsFunc()
 	}
 }
 
-void MultiAgentHandler::adjacentFunc(bool fullPath)
+void MultiAgentHandler::adjacentFunc()
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
@@ -116,82 +116,25 @@ void MultiAgentHandler::adjacentFunc(bool fullPath)
 			worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].disToGoal = 0;//set goal to zero to base the rest of spots off
 			int currentDis = 0;//active distance we are dealing with
 			currentDis = numberGrid(currentDis, i);
-			if (!fullPath)
+
+			worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//the spot the agent is on is blocked
+			if (agentNumber[i].current.x != WORLD_WIDTH - 1 && worldBlocks[agentNumber[i].current.x + 1][agentNumber[i].current.y].disToGoal < 999)//true if not on right side + possible path marked
 			{
-				worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//the spot the agent is on is blocked
-				if (agentNumber[i].current.x != WORLD_WIDTH - 1 && worldBlocks[agentNumber[i].current.x + 1][agentNumber[i].current.y].disToGoal < 999)//true if not on right side + possible path marked
-				{
-					agentNumber[i].currentDirection = Direction::right;
-				}
-				else if (agentNumber[i].current.x != 0 && worldBlocks[agentNumber[i].current.x - 1][agentNumber[i].current.y].disToGoal < 999)
-				{
-					agentNumber[i].currentDirection = Direction::left;
-				}
-				else if (agentNumber[i].current.y != WORLD_HEIGHT - 1 && worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y + 1].disToGoal < 999)
-				{
-					agentNumber[i].currentDirection = Direction::down;
-				}
-				else if (agentNumber[i].current.x != 0 && worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y - 1].disToGoal < 999)
-				{
-					agentNumber[i].currentDirection = Direction::up;
-				}
-				moveSingleAgent(i);
+				agentNumber[i].currentDirection = Direction::right;
 			}
-			else
+			else if (agentNumber[i].current.x != 0 && worldBlocks[agentNumber[i].current.x - 1][agentNumber[i].current.y].disToGoal < 999)
 			{
-				sf::Vector2i currentBlock = agentNumber[i].current;
-				int distance = currentDis;
-				sf::Vector2i goal = agentNumber[i].endGoal;
-				float bestDis = 99;
-				sf::Vector2i changeBlock = currentBlock;
-				sf::Vector2i checkBlock = changeBlock;
-				while (distance > 0)
-				{
-					currentBlock = changeBlock;
-					for (int sides = 0; sides < 4; sides++)
-					{
-						checkBlock = currentBlock;
-						switch (sides)
-						{
-						case 0:
-							checkBlock.y--;
-							break;
-						case 1:
-							checkBlock.x--;
-							break;
-						case 2:
-							checkBlock.x++;
-							break;
-						case 3:
-							checkBlock.y++;
-							break;
-						}
-
-						if (checkBlock.x > -1 && checkBlock.x < WORLD_WIDTH && checkBlock.y > -1 && checkBlock.y < WORLD_HEIGHT &&
-							worldBlocks[checkBlock.x][checkBlock.y].disToGoal == distance - 1)
-						{
-							float currentDis = sqrt(pow((checkBlock.x - goal.x), 2) + pow((checkBlock.y - goal.y), 2));
-							if (currentDis < bestDis)
-							{
-								int index = worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal - distance;
-								if (agentNumber[i].path.size() <= index)
-								{
-									agentNumber[i].path.push_back(sf::Vector2i(checkBlock.x, checkBlock.y));
-								}
-								else
-								{
-									agentNumber[i].path.at(index) = sf::Vector2i(checkBlock.x, checkBlock.y);
-								}
-
-								bestDis = currentDis;
-								changeBlock = sf::Vector2i(checkBlock.x, checkBlock.y);
-							}
-						}
-					}
-					distance--;
-				}
-
+				agentNumber[i].currentDirection = Direction::left;
 			}
+			else if (agentNumber[i].current.y != WORLD_HEIGHT - 1 && worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y + 1].disToGoal < 999)
+			{
+				agentNumber[i].currentDirection = Direction::down;
+			}
+			else if (agentNumber[i].current.x != 0 && worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y - 1].disToGoal < 999)
+			{
+				agentNumber[i].currentDirection = Direction::up;
+			}
+			moveSingleAgent(i);
 		}
 		if(agentNumber[i].current != agentNumber[i].endGoal)
 		{
@@ -202,6 +145,124 @@ void MultiAgentHandler::adjacentFunc(bool fullPath)
 
 			//worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//new current spot is blocked
 			agentNumber[i].setPos();//sets agent off current
+		}
+	}
+}
+
+void MultiAgentHandler::adjacentPathFunc()
+{
+	for (int i = 0; i < MAX_AGENTS; i++)
+	{
+		if (agentNumber[i].path.size() == 0)
+		{
+			findPath(i);
+			for (int i2 = 0; i2 < i; i2++)
+			{
+				if (i2 == 2 && i == 7)
+				{
+					i2 = i2;
+				}
+				int pathLength = 0;
+				while (pathLength < agentNumber[i].path.size() && pathLength < agentNumber[i2].path.size() && i != i2)
+				{
+					if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) || 
+						(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength-1) ) )
+					{
+						std::vector<sf::Vector2i>::iterator it = agentNumber[i].path.begin();
+						if (pathLength == 0)
+						{
+							agentNumber[i].path.insert(it + pathLength, agentNumber[i].current);
+						}
+						else
+						{
+							agentNumber[i].path.insert(it + pathLength, agentNumber[i].path.at(pathLength - 1));
+						}
+					}
+
+					pathLength++;
+				}
+			}
+		}
+		else if (agentNumber[i].current != agentNumber[i].endGoal)
+		{
+			//worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;//current spot is fre
+
+			agentNumber[i].current = agentNumber[i].path.front();
+			agentNumber[i].path.erase(agentNumber[i].path.begin());
+
+			//worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//new current spot is blocked
+			agentNumber[i].setPos();//sets agent off current
+		}
+	}
+}
+
+void MultiAgentHandler::findPath(int i)
+{
+	if (agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() == 0)//true if not at goal
+	{
+		for (int width = 0; width < WORLD_WIDTH; width++)
+		{
+			for (int height = 0; height < WORLD_HEIGHT; height++)
+			{
+				worldBlocks[width][height].disToGoal = 999;//sets distance to goal higher then can ever be
+			}
+		}
+		worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;//current spot is free
+		worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].disToGoal = 0;//set goal to zero to base the rest of spots off
+		int currentDis = 0;//active distance we are dealing with
+		currentDis = numberGrid(currentDis, i);
+
+		sf::Vector2i currentBlock = agentNumber[i].current;
+		int distance = currentDis;
+		sf::Vector2i goal = agentNumber[i].endGoal;
+		float bestDis = 99;
+		sf::Vector2i changeBlock = currentBlock;
+		sf::Vector2i checkBlock = changeBlock;
+		while (distance > 0)
+		{
+			currentBlock = changeBlock;
+			for (int sides = 0; sides < 4; sides++)
+			{
+				checkBlock = currentBlock;
+				switch (sides)
+				{
+				case 0:
+					checkBlock.y--;
+					break;
+				case 1:
+					checkBlock.x--;
+					break;
+				case 2:
+					checkBlock.x++;
+					break;
+				case 3:
+					checkBlock.y++;
+					break;
+				}
+
+				if (checkBlock.x > -1 && checkBlock.x < WORLD_WIDTH && checkBlock.y > -1 && checkBlock.y < WORLD_HEIGHT &&
+					worldBlocks[checkBlock.x][checkBlock.y].disToGoal == distance - 1)
+				{
+					float currentDis = sqrt(pow((checkBlock.x - goal.x), 2) + pow((checkBlock.y - goal.y), 2));
+					if (currentDis < bestDis)
+					{
+						int index = worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal - distance;
+						if (agentNumber[i].path.size() <= index)
+						{
+							agentNumber[i].path.push_back(sf::Vector2i(checkBlock.x, checkBlock.y));
+						}
+						else
+						{
+							agentNumber[i].path.at(index) = sf::Vector2i(checkBlock.x, checkBlock.y);
+						}
+
+						bestDis = currentDis;
+						changeBlock = sf::Vector2i(checkBlock.x, checkBlock.y);
+					}
+				}
+			}
+			bestDis = 99;
+			distance--;
 		}
 	}
 }
