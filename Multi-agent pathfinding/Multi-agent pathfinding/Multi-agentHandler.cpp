@@ -115,7 +115,7 @@ void MultiAgentHandler::adjacentFunc()
 			worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;//current spot is free
 			worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].disToGoal = 0;//set goal to zero to base the rest of spots off
 			int currentDis = 0;//active distance we are dealing with
-			currentDis = numberGrid(currentDis, i);
+			currentDis = numberGrid(currentDis, i, agentNumber[i].blockers);
 
 			worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//the spot the agent is on is blocked
 			if (agentNumber[i].current.x != WORLD_WIDTH - 1 && worldBlocks[agentNumber[i].current.x + 1][agentNumber[i].current.y].disToGoal < 999)//true if not on right side + possible path marked
@@ -153,12 +153,24 @@ void MultiAgentHandler::adjacentPathFunc()
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
+		for (sf::Vector2i current: agentNumber[i].path)
+		{
+			if (!worldBlocks[current.x][current.y].passable)
+			{
+				agentNumber[i].path.clear();
+			}
+		}
+
 		if (agentNumber[i].path.size() == 0)
 		{
+			if (agentNumber[i].current == agentNumber[i].endGoal)
+			{
+				worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].passable = false;
+			}
 			findPath(i);
 			for (int i2 = 0; i2 < i; i2++)
 			{
-				if (i2 == 2 && i == 7)
+				if (i2 == 5 && i == 7)
 				{
 					i2 = i2;
 				}
@@ -178,7 +190,18 @@ void MultiAgentHandler::adjacentPathFunc()
 							agentNumber[i].path.insert(it + pathLength, agentNumber[i].path.at(pathLength - 1));
 						}
 					}
-
+					if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||
+						(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))
+					{
+						Blocker temp;
+						temp.pathDis = worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal - pathLength;
+						temp.block = agentNumber[i].path.at(pathLength);
+						agentNumber[i].blockers.push_back(temp);
+						agentNumber[i].path.clear();
+						i--;
+						i2 = i;
+						pathLength = 99;
+					}
 					pathLength++;
 				}
 			}
@@ -210,7 +233,7 @@ void MultiAgentHandler::findPath(int i)
 		worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;//current spot is free
 		worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].disToGoal = 0;//set goal to zero to base the rest of spots off
 		int currentDis = 0;//active distance we are dealing with
-		currentDis = numberGrid(currentDis, i);
+		currentDis = numberGrid(currentDis, i,agentNumber[i].blockers);
 
 		sf::Vector2i currentBlock = agentNumber[i].current;
 		int distance = currentDis;
@@ -327,10 +350,17 @@ void MultiAgentHandler::setUpAgent(sf::Vector2i t_start, sf::Vector2i t_end, sf:
 	//worldBlocks[t_start.x][t_start.y].passable = false;
 }
 
-int MultiAgentHandler::numberGrid(int currentDis, int i)
+int MultiAgentHandler::numberGrid(int currentDis, int i, std::vector<Blocker> t_blockers)
 {
 	while (currentDis < worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal)//true if start is larger then current distance
 	{
+		for (auto eachBlock : agentNumber[i].blockers)
+		{
+			if (currentDis <= eachBlock.pathDis && currentDis + 1 >= eachBlock.pathDis)
+			{
+				worldBlocks[eachBlock.block.x][eachBlock.block.y].passable = false;
+			}
+		}
 		for (int width = 0; width < WORLD_WIDTH; width++)
 		{
 			for (int height = 0; height < WORLD_HEIGHT; height++)
@@ -360,7 +390,27 @@ int MultiAgentHandler::numberGrid(int currentDis, int i)
 				}
 			}
 		}
+		for (auto eachBlock : agentNumber[i].blockers)
+		{
+			if (currentDis <= eachBlock.pathDis && currentDis + 1 >= eachBlock.pathDis)
+			{
+				worldBlocks[eachBlock.block.x][eachBlock.block.y].passable = true;
+			}
+		}
 		currentDis++;//expand on the spots that have just been expanded
 	}
 	return currentDis;
+}
+
+bool MultiAgentHandler::allAtGoal()
+{
+	bool allHome = true;
+	for (int i = 0; i < MAX_AGENTS&& allHome; i++)
+	{
+		if (!agentNumber[i].atGoal())
+		{
+			allHome = false;
+		}
+	}
+	return allHome;
 }

@@ -27,6 +27,7 @@
   <ItemGroup>
     <ClInclude Include="Agent.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Blocker.h" />
     <ClInclude Include="Multi-agentHandler.h" />
     <ClInclude Include="WorldBlock.h" />
   </ItemGroup>

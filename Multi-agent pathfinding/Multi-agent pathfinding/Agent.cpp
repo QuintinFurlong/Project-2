@@ -50,3 +50,8 @@ void Agent::draw(sf::RenderWindow& t_window)
 	t_window.draw(currentText);
 	t_window.draw(endText);
 }
+
+bool Agent::atGoal()
+{
+	return current == endGoal;
+}

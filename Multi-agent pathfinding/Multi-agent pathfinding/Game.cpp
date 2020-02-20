@@ -85,6 +85,10 @@ void Game::processKeys(sf::Event t_event)
 	{
 		newTime++;
 	}
+	if (sf::Keyboard::Escape == t_event.key.code)
+	{
+		m_window.close();
+	}
 }
 
 void Game::update(sf::Time t_deltaTime)
@@ -102,7 +106,7 @@ void Game::update(sf::Time t_deltaTime)
 		oldTime = newTime;
 	}
 	m_timeText.setString(std::to_string(newTime));
-	if (newTime > 27)
+	if (aHandler.allAtGoal())
 	{
 		newTime = 0;
 		setupWorldAndAgents();
@@ -154,13 +158,13 @@ void Game::setupWorldAndAgents()
 	}
 	aHandler.setUpAgent(sf::Vector2i(5,4), sf::Vector2i(7, 15), &m_ArialBlackfont, 0);
 	aHandler.setUpAgent(sf::Vector2i(11, 15), sf::Vector2i(16, 15), &m_ArialBlackfont, 1);
-	aHandler.setUpAgent(sf::Vector2i(5, 8), sf::Vector2i(5, 0), &m_ArialBlackfont, 2);
+	aHandler.setUpAgent(sf::Vector2i(5, 8), sf::Vector2i(5, 3), &m_ArialBlackfont, 2);
 	aHandler.setUpAgent(sf::Vector2i(0, 0), sf::Vector2i(22, 0), &m_ArialBlackfont, 3);
 	aHandler.setUpAgent(sf::Vector2i(0, 15), sf::Vector2i(22, 15), &m_ArialBlackfont, 4);
 	aHandler.setUpAgent(sf::Vector2i(20,9), sf::Vector2i(22, 5), &m_ArialBlackfont, 5);
 	aHandler.setUpAgent(sf::Vector2i(17,2), sf::Vector2i(12, 5), &m_ArialBlackfont, 6);
 	aHandler.setUpAgent(sf::Vector2i(1, 5), sf::Vector2i(22, 6), &m_ArialBlackfont, 7);
-	aHandler.setUpAgent(sf::Vector2i(20, 8), sf::Vector2i(2, 15), &m_ArialBlackfont, 8);
+	aHandler.setUpAgent(sf::Vector2i(21, 8), sf::Vector2i(2, 15), &m_ArialBlackfont, 8);
 	aHandler.setUpAgent(sf::Vector2i(15, 15), sf::Vector2i(10, 15), &m_ArialBlackfont, 9);
 
 	aHandler.worldBlocks[3][15].passable = false;
@@ -176,5 +180,5 @@ void Game::setupWorldAndAgents()
 	aHandler.worldBlocks[6][6].passable = false;
 	aHandler.worldBlocks[6][7].passable = false;
 	aHandler.worldBlocks[6][8].passable = false;
-	aHandler.worldBlocks[5][3].passable = false;
+	aHandler.worldBlocks[6][3].passable = false;
 }

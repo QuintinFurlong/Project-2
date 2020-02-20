@@ -37,5 +37,6 @@ public:
 	void simpleCheckHorz(int index);
 	void moveSingleAgent(int t_index);
 	void setUpAgent(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, int index);
-	int numberGrid(int currentDis, int i);
+	int numberGrid(int currentDis, int i, std::vector<Blocker> t_blockers);
+	bool allAtGoal();
 };

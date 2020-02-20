@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-
+#include "Blocker.h"
 enum Direction
 {
 	right, left, up, down, stay
@@ -14,10 +14,12 @@ public:
 	sf::Text currentText, endText;
 	Direction currentDirection;
 	std::vector<sf::Vector2i> path;
+	std::vector<Blocker> blockers;
 
 	Agent();
 	void setUp(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, int index);
 	void move(sf::Vector2i t_path);
 	void setPos();
 	void draw(sf::RenderWindow& t_window);
+	bool atGoal();
 };
