@@ -22,4 +22,5 @@ public:
 	void setPos();
 	void draw(sf::RenderWindow& t_window);
 	bool atGoal();
+	static const int BLOCK_SIZE = 100;
 };

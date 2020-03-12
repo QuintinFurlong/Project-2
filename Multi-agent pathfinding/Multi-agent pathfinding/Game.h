@@ -41,7 +41,7 @@ private:
 	float newTime;
 	MultiAgentHandler aHandler;
 	bool m_exitGame; // control exiting game
-
+	static const int BLOCK_SIZE = 100;
 };
 
 #endif // !GAME_HPP

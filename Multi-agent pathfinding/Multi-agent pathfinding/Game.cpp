@@ -6,7 +6,7 @@
 #include <iostream>
 
 Game::Game() :
-	m_window{ sf::VideoMode{ (aHandler.WORLD_WIDTH+2)* 100U, (aHandler.WORLD_HEIGHT+2) * 100U, 32U }, "Project 2 Quitnin" },
+	m_window{ sf::VideoMode{ (aHandler.WORLD_WIDTH+2)* BLOCK_SIZE, (aHandler.WORLD_HEIGHT+2) * BLOCK_SIZE, 32U }, "Project 2 Quitnin" },
 	m_exitGame{false}
 {
 	time = 0;
@@ -148,8 +148,8 @@ void Game::setupWorldAndAgents()
 	{
 		for (int height = 0; height < aHandler.WORLD_HEIGHT; height++)
 		{
-			aHandler.worldBlocks[width][height].square.setPosition((width + 1) * 100, (height + 1) * 100);
-			aHandler.worldBlocks[width][height].square.setSize(sf::Vector2f(99, 99));
+			aHandler.worldBlocks[width][height].square.setPosition((width + 1) * BLOCK_SIZE, (height + 1) * BLOCK_SIZE);
+			aHandler.worldBlocks[width][height].square.setSize(sf::Vector2f(BLOCK_SIZE-1, BLOCK_SIZE-1));
 			aHandler.worldBlocks[width][height].square.setFillColor(sf::Color::Green);
 			aHandler.worldBlocks[width][height].square.setOutlineThickness(1);
 			aHandler.worldBlocks[width][height].square.setOutlineColor(sf::Color::Black);
