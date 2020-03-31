@@ -137,7 +137,7 @@ void Game::setupFontAndText()
 	m_timeText.setFont(m_ArialBlackfont);
 	m_timeText.setString(std::to_string(time));
 	m_timeText.setPosition(40.0f, 0.0f);
-	m_timeText.setCharacterSize(80U);
+	m_timeText.setCharacterSize(50U);
 	m_timeText.setFillColor(sf::Color::Black);
 
 }
@@ -158,7 +158,7 @@ void Game::setupWorldAndAgents()
 	}
 	aHandler.setUpAgent(sf::Vector2i(5,4), sf::Vector2i(7, 15), &m_ArialBlackfont, 0);
 	aHandler.setUpAgent(sf::Vector2i(11, 15), sf::Vector2i(16, 15), &m_ArialBlackfont, 1);
-	aHandler.setUpAgent(sf::Vector2i(5, 8), sf::Vector2i(5, 3), &m_ArialBlackfont, 2);
+	aHandler.setUpAgent(sf::Vector2i(5, 8), sf::Vector2i(4, 3), &m_ArialBlackfont, 2);
 	aHandler.setUpAgent(sf::Vector2i(0, 0), sf::Vector2i(22, 0), &m_ArialBlackfont, 3);
 	aHandler.setUpAgent(sf::Vector2i(0, 15), sf::Vector2i(22, 15), &m_ArialBlackfont, 4);
 	aHandler.setUpAgent(sf::Vector2i(20,9), sf::Vector2i(22, 5), &m_ArialBlackfont, 5);
@@ -180,5 +180,6 @@ void Game::setupWorldAndAgents()
 	aHandler.worldBlocks[6][6].passable = false;
 	aHandler.worldBlocks[6][7].passable = false;
 	aHandler.worldBlocks[6][8].passable = false;
-	aHandler.worldBlocks[6][3].passable = false;
+	aHandler.worldBlocks[5][3].passable = false;
+	aHandler.worldBlocks[5][2].passable = false;
 }

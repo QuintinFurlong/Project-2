@@ -7,9 +7,9 @@ Agent::Agent()
 	goal.setFillColor(sf::Color(80,80,255));
 	goal.setSize(sf::Vector2f(BLOCK_SIZE/2, BLOCK_SIZE/2));
 
-	currentText.setCharacterSize(35);
+	currentText.setCharacterSize(20);
 	currentText.setFillColor(sf::Color::Black);
-	endText.setCharacterSize(35);
+	endText.setCharacterSize(20);
 	endText.setFillColor(sf::Color::Black);
 }
 
