@@ -11,7 +11,7 @@ Game::Game() :
 {
 	oldTime = 0;
 	newTime = 0;
-	aHandler.setPattern(MovePatterns::stairs);//decides which algorithm to use
+	aHandler.setPattern(MovePatterns::recordedPath);//decides which algorithm to use
 
 	setupFontAndText(); 
 	setupWorldAndAgents();
@@ -105,17 +105,19 @@ void Game::update(sf::Time t_deltaTime)
 
 	if (newTime - 1 >= oldTime)
 	{
-		aHandler.moveAgents();//moves each agent for that tick
-		oldTime++;//stops same tick from happening twice
+		if (aHandler.allAtGoal())//if all agents have got to thier own goals, resets world
+		{
+			setupWorldAndAgents();
+			newTime = 0;
+			oldTime = 0;
+		}
+		else
+		{
+			aHandler.moveAgents();//moves each agent for that tick
+			oldTime++;//stops same tick from happening twice
+		}
 	}
 	m_timeText.setString(std::to_string(newTime) + " Path Type : " + aHandler.pathName());
-
-	if (aHandler.allAtGoal())//if all agents have got to thier own goals, resets world
-	{
-		setupWorldAndAgents();
-		newTime = 0;
-		oldTime = 0;
-	}
 }
 
 
@@ -173,6 +175,8 @@ void Game::setupWorldAndAgents()
 	//sets up obstacles
 	aHandler.worldBlocks[3][15].passable = false;
 	aHandler.worldBlocks[3][14].passable = false;
+	aHandler.worldBlocks[11][2].passable = false;
+	aHandler.worldBlocks[12][3].passable = false;
 	aHandler.worldBlocks[4][4].passable = false;
 	aHandler.worldBlocks[4][5].passable = false;
 	aHandler.worldBlocks[4][6].passable = false;

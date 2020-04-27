@@ -146,7 +146,7 @@ void MultiAgentHandler::adjacentFunc()
 			}
 			moveSingleAgent(i);
 		}
-		if(agentNumber[i].current != agentNumber[i].endGoal)
+		if(agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() != 0)
 		{
 			//worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;//current spot is fre
 			
@@ -163,7 +163,7 @@ void MultiAgentHandler::adjacentPathFunc()
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		for (sf::Vector2i current: agentNumber[i].path)
+		for (sf::Vector2i current : agentNumber[i].path)
 		{
 			if (!worldBlocks[current.x][current.y].passable)
 			{
@@ -180,15 +180,15 @@ void MultiAgentHandler::adjacentPathFunc()
 			findPath(i);
 			for (int i2 = 0; i2 < i; i2++)
 			{
-				if (i2 == 5 && i == 7)
+				if (i2 == 5 && i == 8)
 				{
 					i2 = i2;
 				}
 				int pathLength = 0;
 				while (pathLength < agentNumber[i].path.size() && pathLength < agentNumber[i2].path.size() && i != i2)
 				{
-					if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) || 
-						(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength-1) ) )
+					if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||
+						(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))
 					{
 						std::vector<sf::Vector2i>::iterator it = agentNumber[i].path.begin();
 						if (pathLength == 0)
@@ -216,7 +216,10 @@ void MultiAgentHandler::adjacentPathFunc()
 				}
 			}
 		}
-		else if (agentNumber[i].current != agentNumber[i].endGoal)
+	}
+	for (int i = 0; i < MAX_AGENTS; i++)
+	{
+		if (agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() != 0)
 		{
 			//worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;//current spot is fre
 
