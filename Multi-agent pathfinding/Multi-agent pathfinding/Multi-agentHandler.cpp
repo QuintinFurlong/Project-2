@@ -49,7 +49,6 @@ void MultiAgentHandler::draw(sf::RenderWindow& t_window)
 	}
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		//worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;
 		agentNumber[i].draw(t_window);
 	}
 }
@@ -78,6 +77,7 @@ void MultiAgentHandler::stairsFunc()
 		agentNumber[i].currentDirection = Direction::stay;
 		if (agentNumber[i].current != agentNumber[i].endGoal)//true if not at goal
 		{
+			//true if x distance is greater then y distance
 			if (abs(agentNumber[i].current.x - agentNumber[i].endGoal.x) > abs(agentNumber[i].current.y - agentNumber[i].endGoal.y))
 			{
 				simpleCheckHorz(i);
@@ -86,12 +86,22 @@ void MultiAgentHandler::stairsFunc()
 					simpleCheckVert(i);
 				}
 			}
-			else
+			//true if agent hasn't decided to move (if it can't/shouldn't move left or right)
+			if (agentNumber[i].currentDirection == Direction::stay)
 			{
 				simpleCheckVert(i);
 				if (agentNumber[i].currentDirection == Direction::stay)
 				{
 					simpleCheckHorz(i);
+				}
+				//true if agent hasn't decided to move up or down 
+				if (agentNumber[i].currentDirection == Direction::stay)
+				{
+					simpleCheckVert(i);
+					if (agentNumber[i].currentDirection == Direction::stay)
+					{
+						simpleCheckHorz(i);
+					}
 				}
 			}
 		}
@@ -413,4 +423,70 @@ bool MultiAgentHandler::allAtGoal()
 		}
 	}
 	return allHome;
+}
+
+void MultiAgentHandler::changePath(bool t_increase)
+{
+	if (t_increase)
+	{
+		switch (currentPattern)
+		{
+		case straightForward:
+			currentPattern = stairs;
+			break;
+		case stairs:
+			currentPattern = numberAdjacent;
+			break;
+		case numberAdjacent:
+			currentPattern = recordedPath;
+			break;
+		case recordedPath:
+			currentPattern = straightForward;
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		switch (currentPattern)
+		{
+		case straightForward:
+			currentPattern = recordedPath;
+			break;
+		case stairs:
+			currentPattern = straightForward;
+			break;
+		case numberAdjacent:
+			currentPattern = stairs;
+			break;
+		case recordedPath:
+			currentPattern = numberAdjacent;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+std::string MultiAgentHandler::pathName()
+{
+	switch (currentPattern)
+	{
+	case straightForward:
+		return "Straight Forward";
+		break;
+	case stairs:
+		return "Stairs";
+		break;
+	case numberAdjacent:
+		return "Number Adjacent";
+		break;
+	case recordedPath:
+		return "Recorded Path";
+		break;
+	default:
+		break;
+	}
+	return std::string();
 }

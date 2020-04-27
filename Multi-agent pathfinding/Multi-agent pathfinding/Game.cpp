@@ -1,5 +1,5 @@
 /// <summary>
-/// @author Quintin
+/// @author Quintin Furlong
 /// </summary>
 
 #include "Game.h"
@@ -9,10 +9,9 @@ Game::Game() :
 	m_window{ sf::VideoMode{ (aHandler.WORLD_WIDTH+2)* BLOCK_SIZE, (aHandler.WORLD_HEIGHT+2) * BLOCK_SIZE, 32U }, "Project 2 Quitnin" },
 	m_exitGame{false}
 {
-	time = 0;
 	oldTime = 0;
 	newTime = 0;
-	aHandler.setPattern(MovePatterns::recordedPath);
+	aHandler.setPattern(MovePatterns::stairs);//decides which algorithm to use
 
 	setupFontAndText(); 
 	setupWorldAndAgents();
@@ -52,7 +51,7 @@ void Game::processEvents()
 		{
 			m_exitGame = true;
 		}
-		if (sf::Event::KeyReleased == newEvent.type) //user pressed a key
+		if (sf::Event::KeyReleased == newEvent.type) //user released a key
 		{
 			processKeysRelease(newEvent);
 		}
@@ -65,23 +64,29 @@ void Game::processEvents()
 
 void Game::processKeysRelease(sf::Event t_event)
 {
-	if (sf::Keyboard::Space == t_event.key.code)
+	if (sf::Keyboard::Space == t_event.key.code)//space moves agent 1 step at a time
 	{
 		newTime++;
 	}
-	if (sf::Keyboard::R == t_event.key.code)
+	if (sf::Keyboard::R == t_event.key.code || sf::Keyboard::Left == t_event.key.code || sf::Keyboard::Right == t_event.key.code)//resets agents and time
 	{
 		setupWorldAndAgents();
-		time = 0;
 		oldTime = 0;
 		newTime = 0;
-		m_timeText.setString(std::to_string(time));
+	}
+	if (sf::Keyboard::Left == t_event.key.code)//resets agents and time
+	{
+		aHandler.changePath(false);
+	}
+	if (sf::Keyboard::Right == t_event.key.code)//resets agents and time
+	{
+		aHandler.changePath(true);
 	}
 }
 
 void Game::processKeys(sf::Event t_event)
 {
-	if (sf::Keyboard::P == t_event.key.code)
+	if (sf::Keyboard::P == t_event.key.code)//hold 'p' to run through quickly
 	{
 		newTime++;
 	}
@@ -97,22 +102,19 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_window.close();
 	}
-	//newTime += t_deltaTime.asSeconds();
-	if (newTime - 1 >= oldTime)//time != oldTime 
+
+	if (newTime - 1 >= oldTime)
 	{
-		m_timeText.setString(std::to_string(time));
-		aHandler.moveAgents();
-		oldTime = time;
-		oldTime = newTime;
+		aHandler.moveAgents();//moves each agent for that tick
+		oldTime++;//stops same tick from happening twice
 	}
-	m_timeText.setString(std::to_string(newTime));
-	if (aHandler.allAtGoal())
+	m_timeText.setString(std::to_string(newTime) + " Path Type : " + aHandler.pathName());
+
+	if (aHandler.allAtGoal())//if all agents have got to thier own goals, resets world
 	{
-		newTime = 0;
 		setupWorldAndAgents();
-		time = 0;
+		newTime = 0;
 		oldTime = 0;
-		
 	}
 }
 
@@ -135,8 +137,7 @@ void Game::setupFontAndText()
 		std::cout << "problem loading arial black font" << std::endl;
 	}
 	m_timeText.setFont(m_ArialBlackfont);
-	m_timeText.setString(std::to_string(time));
-	m_timeText.setPosition(40.0f, 0.0f);
+	m_timeText.setPosition(40.0f, -10.0f);
 	m_timeText.setCharacterSize(50U);
 	m_timeText.setFillColor(sf::Color::Black);
 
@@ -144,6 +145,7 @@ void Game::setupFontAndText()
 
 void Game::setupWorldAndAgents()
 {
+	//loops set up the game world
 	for (int width = 0; width < aHandler.WORLD_WIDTH; width++)
 	{
 		for (int height = 0; height < aHandler.WORLD_HEIGHT; height++)
@@ -156,6 +158,7 @@ void Game::setupWorldAndAgents()
 			aHandler.worldBlocks[width][height].passable = true;
 		}
 	}
+	//sets positions, goals and label for each agent
 	aHandler.setUpAgent(sf::Vector2i(5,4), sf::Vector2i(7, 15), &m_ArialBlackfont, 0);
 	aHandler.setUpAgent(sf::Vector2i(11, 15), sf::Vector2i(16, 15), &m_ArialBlackfont, 1);
 	aHandler.setUpAgent(sf::Vector2i(5, 8), sf::Vector2i(4, 3), &m_ArialBlackfont, 2);
@@ -167,9 +170,9 @@ void Game::setupWorldAndAgents()
 	aHandler.setUpAgent(sf::Vector2i(21, 8), sf::Vector2i(2, 15), &m_ArialBlackfont, 8);
 	aHandler.setUpAgent(sf::Vector2i(15, 15), sf::Vector2i(10, 15), &m_ArialBlackfont, 9);
 
+	//sets up obstacles
 	aHandler.worldBlocks[3][15].passable = false;
 	aHandler.worldBlocks[3][14].passable = false;
-
 	aHandler.worldBlocks[4][4].passable = false;
 	aHandler.worldBlocks[4][5].passable = false;
 	aHandler.worldBlocks[4][6].passable = false;

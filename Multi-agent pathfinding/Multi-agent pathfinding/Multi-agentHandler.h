@@ -9,7 +9,7 @@ enum MovePatterns
 	straightForward,//moves right/left till same column then up/down till same block
 	stairs, //moves right/left if can't then up/down till same block
 	numberAdjacent,//Dijkstra's algorithm
-	recordedPath
+	recordedPath//does a dijkstra for each agent and keeps previous paths as obstales
 };
 
 class MultiAgentHandler
@@ -39,4 +39,6 @@ public:
 	void setUpAgent(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, int index);
 	int numberGrid(int currentDis, int i, std::vector<Blocker> t_blockers);
 	bool allAtGoal();
+	void changePath(bool t_increase);
+	std::string pathName();
 };
