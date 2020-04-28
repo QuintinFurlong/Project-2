@@ -1,8 +1,10 @@
 ﻿  Multi-agentHandler.cpp
 C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(179,24): warning C4018: '<': signed/unsigned mismatch
 C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(179,67): warning C4018: '<': signed/unsigned mismatch
-C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(266,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(266,65): warning C4018: '<': signed/unsigned mismatch
-C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(332,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(336,38): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(253,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(253,65): warning C4018: '<': signed/unsigned mismatch
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(324,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(324,65): warning C4018: '<': signed/unsigned mismatch
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(389,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(393,38): warning C4018: '<=': signed/unsigned mismatch
   Multi-agent pathfinding.vcxproj -> C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Debug\Multi-agent pathfinding.exe
