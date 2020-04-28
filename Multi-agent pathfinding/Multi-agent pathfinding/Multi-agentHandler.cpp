@@ -244,6 +244,22 @@ void MultiAgentHandler::optimalPathFunc()
 			}
 		}
 	}
+	
+	redoPath();
+	for (int i = 0; i < MAX_AGENTS; i++)
+	{
+		if (agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() != 0)
+		{
+			agentNumber[i].current = agentNumber[i].path.front();
+			agentNumber[i].path.erase(agentNumber[i].path.begin());
+			agentNumber[i].setPos();//sets agent off current
+		}
+	}
+}
+
+void MultiAgentHandler::redoPath()
+{
+	bool anyBlockers = false;
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
 		for (int i2 = 0; i2 < MAX_AGENTS; i2++)
@@ -266,6 +282,7 @@ void MultiAgentHandler::optimalPathFunc()
 					}
 					agentNumber[i].blockers.push_back(temp);
 					pathLength = 99;
+					anyBlockers = true;
 				}
 				pathLength++;
 			}
@@ -278,10 +295,10 @@ void MultiAgentHandler::optimalPathFunc()
 			int shortestDistance = agentNumber[i].path.size();
 			agentNumber[i].path.clear();
 			findPath(i);
-			if (true||shortestDistance == agentNumber[i].path.size())
+			if (true || shortestDistance == agentNumber[i].path.size())
 			{
 				for (auto blocker : agentNumber[i].blockers)
-				{			
+				{
 					std::vector<Blocker> newVector;
 					for (auto blocker2 : agentNumber[blocker.whichAgents.y].blockers)
 					{
@@ -297,45 +314,15 @@ void MultiAgentHandler::optimalPathFunc()
 			}
 			else
 			{
-				std::cout<< "outlier. more work" << std::endl;
+				std::cout << "outlier. more work" << std::endl;
 			}
 		}
 	}
-	//redoPath();
-	for (int i = 0; i < MAX_AGENTS; i++)
+	if (anyBlockers)
 	{
-		if (agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() != 0)
-		{
-			agentNumber[i].current = agentNumber[i].path.front();
-			agentNumber[i].path.erase(agentNumber[i].path.begin());
-			agentNumber[i].setPos();//sets agent off current
-		}
-	}
-}
-
-void MultiAgentHandler::redoPath()
-{
-	int pathLength = 0;//keeps track which tick we are dealing with
-	for (int i = 0; i < MAX_AGENTS; i++)
-	{
-		for (int i2 = i + 1; i2 < MAX_AGENTS; i2++)
-		{
-			pathLength = 0;
-			while (pathLength < agentNumber[i].path.size() && pathLength < agentNumber[i2].path.size())
-			{
-				if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||
-					(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))
-				{
-					/*sf::Vector2i temp = agentNumber[i].path.at(pathLength);
-					worldBlocks[temp.x][temp.y].passable = false;
-					agentNumber[i].path.clear();
-					findPath(i);
-					worldBlocks[temp.x][temp.y].passable = true;
-					redoPath();*/
-				}
-				pathLength++;
-			}
-		}
+		std::cout << "qwr" << std::endl;
+		redoPath();
+		
 	}
 }
 
@@ -476,8 +463,7 @@ int MultiAgentHandler::numberGrid(int currentDis, int i, std::vector<Blocker> t_
 	{
 		for (auto eachBlock : agentNumber[i].blockers)
 		{
-			if ((eachBlock.next && currentDis == eachBlock.pathDis -2)
-				|| (eachBlock.next && currentDis == eachBlock.pathDis-1))
+			if (currentPattern != numberAdjacent)
 			{
 				worldBlocks[eachBlock.block.x][eachBlock.block.y].passable = false;
 			}
@@ -513,8 +499,8 @@ int MultiAgentHandler::numberGrid(int currentDis, int i, std::vector<Blocker> t_
 		}
 		for (auto eachBlock : agentNumber[i].blockers)
 		{
-			if ((eachBlock.next && currentDis == eachBlock.pathDis-2)
-				|| (eachBlock.next && currentDis == eachBlock.pathDis - 1))
+			if (currentPattern != numberAdjacent)/*(eachBlock.next && currentDis == eachBlock.pathDis-2)
+				|| (eachBlock.next && currentDis == eachBlock.pathDis - 1))*/
 			{
 				worldBlocks[eachBlock.block.x][eachBlock.block.y].passable = true;
 			}
