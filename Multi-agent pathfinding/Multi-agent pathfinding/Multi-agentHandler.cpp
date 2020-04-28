@@ -29,6 +29,9 @@ void MultiAgentHandler::moveAgents()
 	case recordedPath:
 		adjacentPathFunc();
 		break;
+	case optimal:
+		optimalPathFunc();
+		break;
 	default:
 		break;
 	}
@@ -119,6 +122,7 @@ void MultiAgentHandler::adjacentFunc()
 			{
 				for (int height = 0; height < WORLD_HEIGHT; height++)
 				{
+					worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;
 					worldBlocks[width][height].disToGoal = 999;//sets distance to goal higher then can ever be
 				}
 			}
@@ -148,12 +152,8 @@ void MultiAgentHandler::adjacentFunc()
 		}
 		if(agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() != 0)
 		{
-			//worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;//current spot is fre
-			
 			agentNumber[i].current = agentNumber[i].path.front();
 			agentNumber[i].path.erase(agentNumber[i].path.begin());
-
-			//worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//new current spot is blocked
 			agentNumber[i].setPos();//sets agent off current
 		}
 	}
@@ -165,42 +165,53 @@ void MultiAgentHandler::adjacentPathFunc()
 	{
 		if (agentNumber[i].path.size() == 0)
 		{
-			if (agentNumber[i].current == agentNumber[i].endGoal)
+			if (agentNumber[i].current == agentNumber[i].endGoal)//if agent has made it to goal
 			{
- 				worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].passable = false;
+ 				worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].passable = false;//makes finished agents obstacles
 			}
-			findPath(i);
-			for (int i2 = 0; i2 < i; i2++)
+			else
 			{
-				int pathLength = 0;
-				while (pathLength < agentNumber[i].path.size() && pathLength < agentNumber[i2].path.size() && i != i2)
+				findPath(i);//creates a path with a numberd grid for the passed in agent number
+				for (int i2 = 0; i2 < i; i2++)//loops through all previous agents
 				{
-					if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||
-						(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))
+					int pathLength = 0;//keeps track which tick we are dealing with
+					//true while neither agent has made it to their goals and aren't the same agent
+					while (pathLength < agentNumber[i].path.size() && pathLength < agentNumber[i2].path.size() && i != i2)
 					{
-						std::vector<sf::Vector2i>::iterator it = agentNumber[i].path.begin();
-						if (pathLength == 0)
+						//checks that there isn't an agent in the way or soon will be
+						//if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||
+						//	(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))
+						//{
+						//	std::vector<sf::Vector2i>::iterator it = agentNumber[i].path.begin();
+						//	//simply puts a stop in the path
+						//	if (pathLength == 0)
+						//	{
+						//		agentNumber[i].path.insert(it + pathLength, agentNumber[i].current);
+						//	}
+						//	else
+						//	{
+						//		agentNumber[i].path.insert(it + pathLength, agentNumber[i].path.at(pathLength - 1));
+						//	}
+						//}
+						if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||
+							(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))
 						{
-							agentNumber[i].path.insert(it + pathLength, agentNumber[i].current);
+							Blocker temp;
+							temp.pathDis = worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal - pathLength-1;
+							temp.block = agentNumber[i].path.at(pathLength);
+							temp.next = false;
+							if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength))
+							{
+								temp.next = true;
+							}
+							agentNumber[i].blockers.push_back(temp);
+							agentNumber[i].path.clear();
+							i--;
+							i2 = i;
+							pathLength = 99;
 						}
-						else
-						{
-							agentNumber[i].path.insert(it + pathLength, agentNumber[i].path.at(pathLength - 1));
-						}
+						pathLength++;
 					}
-					if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||
-						(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))
-					{
-						Blocker temp;
-						temp.pathDis = worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal - pathLength;
-						temp.block = agentNumber[i].path.at(pathLength);
-						agentNumber[i].blockers.push_back(temp);
-						agentNumber[i].path.clear();
-						i--;
-						i2 = i;
-						pathLength = 99;
-					}
-					pathLength++;
 				}
 			}
 		}
@@ -212,6 +223,61 @@ void MultiAgentHandler::adjacentPathFunc()
 			agentNumber[i].current = agentNumber[i].path.front();
 			agentNumber[i].path.erase(agentNumber[i].path.begin());
 			agentNumber[i].setPos();//sets agent off current
+		}
+	}
+}
+
+void MultiAgentHandler::optimalPathFunc()
+{
+	for (int i = 0; i < MAX_AGENTS; i++)
+	{
+		if (agentNumber[i].path.size() == 0)
+		{
+			if (agentNumber[i].current == agentNumber[i].endGoal)//if agent has made it to goal
+			{
+				worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].passable = false;//makes finished agents obstacles
+			}
+			else
+			{
+				findPath(i);//creates a path with a numberd grid for the passed in agent number
+			}
+		}
+	}
+	redoPath();
+	for (int i = 0; i < MAX_AGENTS; i++)
+	{
+		if (agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() != 0)
+		{
+			agentNumber[i].current = agentNumber[i].path.front();
+			agentNumber[i].path.erase(agentNumber[i].path.begin());
+			agentNumber[i].setPos();//sets agent off current
+		}
+	}
+}
+
+void MultiAgentHandler::redoPath()
+{
+	int pathLength = 0;//keeps track which tick we are dealing with
+	for (int i = 0; i < MAX_AGENTS; i++)
+	{
+		for (int i2 = i + 1; i2 < MAX_AGENTS; i2++)
+		{
+			pathLength = 0;
+			while (pathLength < agentNumber[i].path.size() && pathLength < agentNumber[i2].path.size())
+			{
+				if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||
+					(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))
+				{
+					/*sf::Vector2i temp = agentNumber[i].path.at(pathLength);
+					worldBlocks[temp.x][temp.y].passable = false;
+					agentNumber[i].path.clear();
+					findPath(i);
+					worldBlocks[temp.x][temp.y].passable = true;
+					redoPath();*/
+					std::cout << "oujmfgjmn" << std::endl;
+				}
+				pathLength++;
+			}
 		}
 	}
 }
@@ -353,7 +419,8 @@ int MultiAgentHandler::numberGrid(int currentDis, int i, std::vector<Blocker> t_
 	{
 		for (auto eachBlock : agentNumber[i].blockers)
 		{
-			if (currentDis <= eachBlock.pathDis && currentDis + 1 >= eachBlock.pathDis)
+			if ((eachBlock.next && currentDis == eachBlock.pathDis - 1 )
+				|| (!eachBlock.next && currentDis == eachBlock.pathDis-1))
 			{
 				worldBlocks[eachBlock.block.x][eachBlock.block.y].passable = false;
 			}
@@ -389,7 +456,8 @@ int MultiAgentHandler::numberGrid(int currentDis, int i, std::vector<Blocker> t_
 		}
 		for (auto eachBlock : agentNumber[i].blockers)
 		{
-			if (currentDis <= eachBlock.pathDis && currentDis + 1 >= eachBlock.pathDis)
+			if ((eachBlock.next && currentDis == eachBlock.pathDis)
+				|| (!eachBlock.next && currentDis == eachBlock.pathDis - 1))
 			{
 				worldBlocks[eachBlock.block.x][eachBlock.block.y].passable = true;
 			}
@@ -428,6 +496,9 @@ void MultiAgentHandler::changePath(bool t_increase)
 			currentPattern = recordedPath;
 			break;
 		case recordedPath:
+			currentPattern = optimal;
+			break;
+		case optimal:
 			currentPattern = straightForward;
 			break;
 		default:
@@ -439,7 +510,7 @@ void MultiAgentHandler::changePath(bool t_increase)
 		switch (currentPattern)
 		{
 		case straightForward:
-			currentPattern = recordedPath;
+			currentPattern = optimal;
 			break;
 		case stairs:
 			currentPattern = straightForward;
@@ -449,6 +520,9 @@ void MultiAgentHandler::changePath(bool t_increase)
 			break;
 		case recordedPath:
 			currentPattern = numberAdjacent;
+			break;
+		case optimal:
+			currentPattern = recordedPath;
 			break;
 		default:
 			break;
@@ -471,6 +545,9 @@ std::string MultiAgentHandler::pathName()
 		break;
 	case recordedPath:
 		return "Recorded Path";
+		break;
+	case optimal:
+		return "Optimal Path";
 		break;
 	default:
 		break;

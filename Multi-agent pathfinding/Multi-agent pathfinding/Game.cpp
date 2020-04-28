@@ -11,7 +11,7 @@ Game::Game() :
 {
 	oldTime = 0;
 	newTime = 0;
-	aHandler.setPattern(MovePatterns::recordedPath);//decides which algorithm to use
+	aHandler.setPattern(MovePatterns::optimal);//decides which algorithm to use
 
 	setupFontAndText(); 
 	setupWorldAndAgents();

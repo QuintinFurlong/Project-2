@@ -9,7 +9,8 @@ enum MovePatterns
 	straightForward,//moves right/left till same column then up/down till same block
 	stairs, //moves right/left if can't then up/down till same block
 	numberAdjacent,//Dijkstra's algorithm
-	recordedPath//does a dijkstra for each agent and keeps previous paths as obstales
+	recordedPath,//does a dijkstra for each agent and keeps previous paths as obstales
+	optimal
 };
 
 class MultiAgentHandler
@@ -32,6 +33,8 @@ public:
 	void stairsFunc();
 	void adjacentFunc();
 	void adjacentPathFunc();
+	void optimalPathFunc();
+	void redoPath();
 	void findPath(int i);
 	void simpleCheckVert(int index);
 	void simpleCheckHorz(int index);
