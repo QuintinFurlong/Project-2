@@ -163,27 +163,15 @@ void MultiAgentHandler::adjacentPathFunc()
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		for (sf::Vector2i current : agentNumber[i].path)
-		{
-			if (!worldBlocks[current.x][current.y].passable)
-			{
-				agentNumber[i].path.clear();
-			}
-		}
-
 		if (agentNumber[i].path.size() == 0)
 		{
 			if (agentNumber[i].current == agentNumber[i].endGoal)
 			{
-				worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].passable = false;
+ 				worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].passable = false;
 			}
 			findPath(i);
 			for (int i2 = 0; i2 < i; i2++)
 			{
-				if (i2 == 5 && i == 8)
-				{
-					i2 = i2;
-				}
 				int pathLength = 0;
 				while (pathLength < agentNumber[i].path.size() && pathLength < agentNumber[i2].path.size() && i != i2)
 				{
@@ -221,12 +209,8 @@ void MultiAgentHandler::adjacentPathFunc()
 	{
 		if (agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() != 0)
 		{
-			//worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;//current spot is fre
-
 			agentNumber[i].current = agentNumber[i].path.front();
 			agentNumber[i].path.erase(agentNumber[i].path.begin());
-
-			//worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//new current spot is blocked
 			agentNumber[i].setPos();//sets agent off current
 		}
 	}
@@ -492,4 +476,14 @@ std::string MultiAgentHandler::pathName()
 		break;
 	}
 	return std::string();
+}
+
+float MultiAgentHandler::averagePathSize()
+{
+	float average = 0.0f;
+	for (int i = 0; i < MAX_AGENTS; i++)
+	{
+		average += agentNumber[i].pathSize;
+	}
+	return average/ MAX_AGENTS;
 }

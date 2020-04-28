@@ -11,9 +11,10 @@ Agent::Agent()
 	currentText.setFillColor(sf::Color::Black);
 	endText.setCharacterSize(20);
 	endText.setFillColor(sf::Color::Black);
+	index = -1;
 }
 
-void Agent::setUp(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, int index)
+void Agent::setUp(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, int t_index)
 {
 	current = t_start;
 	endGoal = t_end;
@@ -24,23 +25,21 @@ void Agent::setUp(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, in
 	currentDirection = Direction::stay;
 
 	currentText.setFont(*t_font);
-	currentText.setString(std::to_string(index));
+	currentText.setString(std::to_string(t_index));
 	currentText.setPosition(body.getPosition());
 	endText.setFont(*t_font);
-	endText.setString(std::to_string(index));
+	endText.setString(std::to_string(t_index));
 	endText.setPosition(goal.getPosition());
-}
-
-void Agent::move(sf::Vector2i t_path)
-{
-	body.move(t_path.x * BLOCK_SIZE, t_path.y * BLOCK_SIZE);
-	currentText.setPosition(body.getPosition());
+	index = t_index;
+	pathSize = 0;
 }
 
 void Agent::setPos()
 {
 	body.setPosition((current.x + 1) * BLOCK_SIZE, ((current.y + 1) * BLOCK_SIZE)+ BLOCK_SIZE/4);
-	currentText.setPosition(body.getPosition());
+	currentText.setPosition(body.getPosition()); 
+	pathSize++;
+	endText.setString(std::to_string(index) + " : " + std::to_string(pathSize));
 }
 
 void Agent::draw(sf::RenderWindow& t_window)
@@ -52,6 +51,6 @@ void Agent::draw(sf::RenderWindow& t_window)
 }
 
 bool Agent::atGoal()
-{
+{	
 	return current == endGoal;
 }

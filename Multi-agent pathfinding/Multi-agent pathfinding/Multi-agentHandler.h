@@ -41,4 +41,5 @@ public:
 	bool allAtGoal();
 	void changePath(bool t_increase);
 	std::string pathName();
+	float averagePathSize();
 };

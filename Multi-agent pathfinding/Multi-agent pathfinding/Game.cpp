@@ -117,7 +117,7 @@ void Game::update(sf::Time t_deltaTime)
 			oldTime++;//stops same tick from happening twice
 		}
 	}
-	m_timeText.setString(std::to_string(newTime) + " Path Type : " + aHandler.pathName());
+	m_timeText.setString(std::to_string(newTime) + "\tPath Type : " + aHandler.pathName() + "\tAverage : " + std::to_string(aHandler.averagePathSize()));
 }
 
 
@@ -139,8 +139,8 @@ void Game::setupFontAndText()
 		std::cout << "problem loading arial black font" << std::endl;
 	}
 	m_timeText.setFont(m_ArialBlackfont);
-	m_timeText.setPosition(40.0f, -10.0f);
-	m_timeText.setCharacterSize(50U);
+	m_timeText.setPosition(40.0f, 3.0f);
+	m_timeText.setCharacterSize(40U);
 	m_timeText.setFillColor(sf::Color::Black);
 
 }

@@ -29,8 +29,7 @@ private:
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
 	sf::Text m_timeText; // text used for message on screen
-	int oldTime;
-	float newTime;
+	int oldTime,newTime;
 	MultiAgentHandler aHandler;
 	bool m_exitGame; // control exiting game
 	static const int BLOCK_SIZE = 50;
