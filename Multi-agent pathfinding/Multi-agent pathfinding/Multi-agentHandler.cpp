@@ -244,7 +244,6 @@ void MultiAgentHandler::optimalPathFunc()
 			}
 		}
 	}
-	
 	redoPath();
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
@@ -265,7 +264,7 @@ void MultiAgentHandler::redoPath()
 		for (int i2 = 0; i2 < MAX_AGENTS; i2++)
 		{
 			int pathLength = 0;//keeps track which tick we are dealing with
-					//true while neither agent has made it to their goals and aren't the same agent
+			//true while neither agent has made it to their goals and aren't the same agent
 			while (pathLength < agentNumber[i].path.size() && pathLength < agentNumber[i2].path.size() && i != i2)
 			{
 				if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||
@@ -286,6 +285,23 @@ void MultiAgentHandler::redoPath()
 				}
 				pathLength++;
 			}
+			while (pathLength < agentNumber[i].path.size() && i != i2 && agentNumber[i2].path.size()>0)
+			{
+				if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(agentNumber[i2].path.size()-1))
+				{
+					Blocker temp;
+					temp.pathDis = agentNumber[i].path.size() - pathLength;
+					temp.block = agentNumber[i].path.at(pathLength);
+					temp.next = false;
+					temp.whichAgents = sf::Vector2i(i, i2);
+					if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(agentNumber[i2].path.size() - 1))
+					{
+						temp.next = true;
+					}
+					agentNumber[i].blockers.push_back(temp);
+				}
+				pathLength++;
+			}
 		}
 	}
 	for (int i = 0; i < MAX_AGENTS; i++)
@@ -295,7 +311,7 @@ void MultiAgentHandler::redoPath()
 			int shortestDistance = agentNumber[i].path.size();
 			agentNumber[i].path.clear();
 			findPath(i);
-			if (true || shortestDistance == agentNumber[i].path.size())
+			if (shortestDistance == agentNumber[i].path.size())
 			{
 				for (auto blocker : agentNumber[i].blockers)
 				{
@@ -314,15 +330,50 @@ void MultiAgentHandler::redoPath()
 			}
 			else
 			{
+				int i2 = agentNumber[i].blockers.at(0).whichAgents.y;
+				int shortestDistance2 = agentNumber[i2].path.size();
+				agentNumber[i2].path.clear();
+				findPath(i2);
+				if (shortestDistance + agentNumber[i2].path.size() <= agentNumber[i].path.size() + shortestDistance2)
+				{
+					agentNumber[i].blockers.clear();
+					agentNumber[i].path.clear();
+					findPath(i);
+					std::vector<Blocker> newVector;
+					for (auto blocker2 : agentNumber[i2].blockers)
+					{
+						if (blocker2.whichAgents.y != i)
+						{
+							newVector.push_back(blocker2);
+						}
+					}
+					agentNumber[i2].blockers.clear();
+					agentNumber[i2].blockers = newVector;
+				}
+				else
+				{
+					std::vector<Blocker> newVector;
+					for (auto blocker2 : agentNumber[i2].blockers)
+					{
+						if (blocker2.whichAgents.y != i)
+						{
+							newVector.push_back(blocker2);
+						}
+					}
+					agentNumber[i2].blockers.clear();
+					agentNumber[i2].blockers = newVector;
+					agentNumber[i2].path.clear();
+					findPath(i2);
+					agentNumber[i].blockers.erase(agentNumber[i].blockers.begin());
+				}
+
 				std::cout << "outlier. more work" << std::endl;
 			}
 		}
 	}
 	if (anyBlockers)
 	{
-		std::cout << "qwr" << std::endl;
 		redoPath();
-		
 	}
 }
 
@@ -350,7 +401,7 @@ void MultiAgentHandler::findPath(int i)
 		sf::Vector2i checkBlock = changeBlock;
 		while (distance > 0)
 		{
-			currentBlock = changeBlock;
+			currentBlock = changeBlock; 
 			for (int sides = 0; sides < 4; sides++)
 			{
 				checkBlock = currentBlock;
@@ -374,7 +425,7 @@ void MultiAgentHandler::findPath(int i)
 					worldBlocks[checkBlock.x][checkBlock.y].disToGoal == distance - 1)
 				{
 					float currentDis = sqrt(pow((checkBlock.x - goal.x), 2) + pow((checkBlock.y - goal.y), 2));
-					if (currentDis < bestDis)
+					if (currentDis < bestDis || (currentDis == bestDis && rand()%2==0))
 					{
 						int index = worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal - distance;
 						if (agentNumber[i].path.size() <= index)
@@ -385,7 +436,6 @@ void MultiAgentHandler::findPath(int i)
 						{
 							agentNumber[i].path.at(index) = sf::Vector2i(checkBlock.x, checkBlock.y);
 						}
-
 						bestDis = currentDis;
 						changeBlock = sf::Vector2i(checkBlock.x, checkBlock.y);
 					}

@@ -15,6 +15,7 @@ Game::Game() :
 
 	setupFontAndText(); 
 	setupWorldAndAgents();
+	srand(time(NULL));
 }
 
 Game::~Game()
@@ -171,7 +172,6 @@ void Game::setupWorldAndAgents()
 	aHandler.setUpAgent(sf::Vector2i(1, 5), sf::Vector2i(22, 6), &m_ArialBlackfont, 7);
 	aHandler.setUpAgent(sf::Vector2i(21, 8), sf::Vector2i(2, 15), &m_ArialBlackfont, 8);
 	aHandler.setUpAgent(sf::Vector2i(15, 15), sf::Vector2i(10, 15), &m_ArialBlackfont, 9);
-
 
 	//sets up obstacles
 	aHandler.worldBlocks[3][15].passable = false;
