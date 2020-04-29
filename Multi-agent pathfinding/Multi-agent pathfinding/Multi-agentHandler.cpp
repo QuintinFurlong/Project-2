@@ -15,6 +15,7 @@ void MultiAgentHandler::setPattern(MovePatterns t_move)
 
 void MultiAgentHandler::moveAgents()
 {
+	//uses currentPattern to determine which algorithm to use
 	switch (currentPattern)
 	{
 	case straightForward:
@@ -112,6 +113,7 @@ void MultiAgentHandler::stairsFunc()
 	}
 }
 
+//moves each agent separately, so other agents are marked as obstacles
 void MultiAgentHandler::adjacentFunc()
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
@@ -132,7 +134,8 @@ void MultiAgentHandler::adjacentFunc()
 			currentDis = numberGrid(currentDis, i, agentNumber[i].blockers);
 
 			worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//the spot the agent is on is blocked
-			if (agentNumber[i].current.x != WORLD_WIDTH - 1 && worldBlocks[agentNumber[i].current.x + 1][agentNumber[i].current.y].disToGoal < 999)//true if not on right side + possible path marked
+			//true if not on right side + possible path marked, else ifs used for the same in other directions
+			if (agentNumber[i].current.x != WORLD_WIDTH - 1 && worldBlocks[agentNumber[i].current.x + 1][agentNumber[i].current.y].disToGoal < 999)
 			{
 				agentNumber[i].currentDirection = Direction::right;
 			}
@@ -150,12 +153,6 @@ void MultiAgentHandler::adjacentFunc()
 			}
 			moveSingleAgent(i);
 		}
-		if(agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() != 0)
-		{
-			agentNumber[i].current = agentNumber[i].path.front();
-			agentNumber[i].path.erase(agentNumber[i].path.begin());
-			agentNumber[i].setPos();//sets agent off current
-		}
 	}
 }
 
@@ -163,7 +160,7 @@ void MultiAgentHandler::adjacentPathFunc()
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		if (agentNumber[i].path.size() == 0)
+		if (agentNumber[i].path.size() == 0)//true if agent doesn't have a path yet or finished
 		{
 			if (agentNumber[i].current == agentNumber[i].endGoal)//if agent has made it to goal
 			{
@@ -178,23 +175,8 @@ void MultiAgentHandler::adjacentPathFunc()
 					//true while neither agent has made it to their goals and aren't the same agent
 					while (pathLength < agentNumber[i].path.size() && pathLength < agentNumber[i2].path.size() && i != i2)
 					{
-						//checks that there isn't an agent in the way or soon will be
-						//if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||
-						//	(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))
-						//{
-						//	std::vector<sf::Vector2i>::iterator it = agentNumber[i].path.begin();
-						//	//simply puts a stop in the path
-						//	if (pathLength == 0)
-						//	{
-						//		agentNumber[i].path.insert(it + pathLength, agentNumber[i].current);
-						//	}
-						//	else
-						//	{
-						//		agentNumber[i].path.insert(it + pathLength, agentNumber[i].path.at(pathLength - 1));
-						//	}
-						//}
-						if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||
-							(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))
+						if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||//true if both agents will move into the same square
+							(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))//true if first agent plans to move into another agents square
 						{
 							Blocker temp;
 							temp.pathDis = worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal - pathLength-1;
@@ -271,9 +253,9 @@ void MultiAgentHandler::redoPath()
 					(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))
 				{
 					Blocker temp;
-					temp.pathDis = agentNumber[i].path.size() - pathLength;
+					//temp.pathDis = agentNumber[i].path.size() - pathLength;
 					temp.block = agentNumber[i].path.at(pathLength);
-					temp.next = false;
+					//temp.next = false;
 					temp.whichAgents = sf::Vector2i(i, i2);
 					if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength))
 					{
@@ -366,8 +348,6 @@ void MultiAgentHandler::redoPath()
 					findPath(i2);
 					agentNumber[i].blockers.erase(agentNumber[i].blockers.begin());
 				}
-
-				std::cout << "outlier. more work" << std::endl;
 			}
 		}
 	}
@@ -504,7 +484,6 @@ void MultiAgentHandler::moveSingleAgent(int t_index)
 void MultiAgentHandler::setUpAgent(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, int index)
 {
 	agentNumber[index].setUp(t_start, t_end, t_font, index);
-	//worldBlocks[t_start.x][t_start.y].passable = false;
 }
 
 int MultiAgentHandler::numberGrid(int currentDis, int i, std::vector<Blocker> t_blockers)
