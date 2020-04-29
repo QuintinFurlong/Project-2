@@ -17,7 +17,7 @@ class MultiAgentHandler
 {
 public:
 	static const int MAX_AGENTS = 10;
-	Agent agentNumber[MAX_AGENTS];
+	Agent m_agentNumber[MAX_AGENTS];
 	static const int WORLD_WIDTH = 24;
 	static const int WORLD_HEIGHT = 16;
 

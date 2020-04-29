@@ -4,7 +4,7 @@ MultiAgentHandler::MultiAgentHandler()
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		agentNumber[i].currentDirection = Direction::stay;
+		m_agentNumber[i].currentDirection = Direction::stay;
 	}
 }
 
@@ -53,7 +53,7 @@ void MultiAgentHandler::draw(sf::RenderWindow& t_window)
 	}
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		agentNumber[i].draw(t_window);
+		m_agentNumber[i].draw(t_window);
 	}
 }
 
@@ -61,11 +61,11 @@ void MultiAgentHandler::straightForwFunc()
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		agentNumber[i].currentDirection = Direction::stay;
-		if (agentNumber[i].current != agentNumber[i].endGoal)//true if not at goal
+		m_agentNumber[i].currentDirection = Direction::stay;
+		if (m_agentNumber[i].current != m_agentNumber[i].endGoal)//true if not at goal
 		{
 			simpleCheckHorz(i);
-			if (agentNumber[i].currentDirection == Direction::stay)
+			if (m_agentNumber[i].currentDirection == Direction::stay)
 			{
 				simpleCheckVert(i);
 			}
@@ -78,31 +78,31 @@ void MultiAgentHandler::stairsFunc()
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		agentNumber[i].currentDirection = Direction::stay;
-		if (agentNumber[i].current != agentNumber[i].endGoal)//true if not at goal
+		m_agentNumber[i].currentDirection = Direction::stay;
+		if (m_agentNumber[i].current != m_agentNumber[i].endGoal)//true if not at goal
 		{
 			//true if x distance is greater then y distance
-			if (abs(agentNumber[i].current.x - agentNumber[i].endGoal.x) > abs(agentNumber[i].current.y - agentNumber[i].endGoal.y))
+			if (abs(m_agentNumber[i].current.x - m_agentNumber[i].endGoal.x) > abs(m_agentNumber[i].current.y - m_agentNumber[i].endGoal.y))
 			{
 				simpleCheckHorz(i);
-				if (agentNumber[i].currentDirection == Direction::stay)
+				if (m_agentNumber[i].currentDirection == Direction::stay)
 				{
 					simpleCheckVert(i);
 				}
 			}
 			//true if agent hasn't decided to move (if it can't/shouldn't move left or right)
-			if (agentNumber[i].currentDirection == Direction::stay)
+			if (m_agentNumber[i].currentDirection == Direction::stay)
 			{
 				simpleCheckVert(i);
-				if (agentNumber[i].currentDirection == Direction::stay)
+				if (m_agentNumber[i].currentDirection == Direction::stay)
 				{
 					simpleCheckHorz(i);
 				}
 				//true if agent hasn't decided to move up or down 
-				if (agentNumber[i].currentDirection == Direction::stay)
+				if (m_agentNumber[i].currentDirection == Direction::stay)
 				{
 					simpleCheckVert(i);
-					if (agentNumber[i].currentDirection == Direction::stay)
+					if (m_agentNumber[i].currentDirection == Direction::stay)
 					{
 						simpleCheckHorz(i);
 					}
@@ -118,38 +118,38 @@ void MultiAgentHandler::adjacentFunc()
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		if (agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() == 0)//true if not at goal
+		if (m_agentNumber[i].current != m_agentNumber[i].endGoal && m_agentNumber[i].path.size() == 0)//true if not at goal
 		{
 			for (int width = 0; width < WORLD_WIDTH; width++)
 			{
 				for (int height = 0; height < WORLD_HEIGHT; height++)
 				{
-					worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;
+					worldBlocks[m_agentNumber[i].current.x][m_agentNumber[i].current.y].passable = false;
 					worldBlocks[width][height].disToGoal = 999;//sets distance to goal higher then can ever be
 				}
 			}
-			worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;//current spot is free
-			worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].disToGoal = 0;//set goal to zero to base the rest of spots off
+			worldBlocks[m_agentNumber[i].current.x][m_agentNumber[i].current.y].passable = true;//current spot is free
+			worldBlocks[m_agentNumber[i].endGoal.x][m_agentNumber[i].endGoal.y].disToGoal = 0;//set goal to zero to base the rest of spots off
 			int currentDis = 0;//active distance we are dealing with
-			currentDis = numberGrid(currentDis, i, agentNumber[i].blockers);
+			currentDis = numberGrid(currentDis, i, m_agentNumber[i].blockers);
 
-			worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = false;//the spot the agent is on is blocked
+			worldBlocks[m_agentNumber[i].current.x][m_agentNumber[i].current.y].passable = false;//the spot the agent is on is blocked
 			//true if not on right side + possible path marked, else ifs used for the same in other directions
-			if (agentNumber[i].current.x != WORLD_WIDTH - 1 && worldBlocks[agentNumber[i].current.x + 1][agentNumber[i].current.y].disToGoal < 999)
+			if (m_agentNumber[i].current.x != WORLD_WIDTH - 1 && worldBlocks[m_agentNumber[i].current.x + 1][m_agentNumber[i].current.y].disToGoal < 999)
 			{
-				agentNumber[i].currentDirection = Direction::right;
+				m_agentNumber[i].currentDirection = Direction::right;
 			}
-			else if (agentNumber[i].current.x != 0 && worldBlocks[agentNumber[i].current.x - 1][agentNumber[i].current.y].disToGoal < 999)
+			else if (m_agentNumber[i].current.x != 0 && worldBlocks[m_agentNumber[i].current.x - 1][m_agentNumber[i].current.y].disToGoal < 999)
 			{
-				agentNumber[i].currentDirection = Direction::left;
+				m_agentNumber[i].currentDirection = Direction::left;
 			}
-			else if (agentNumber[i].current.y != WORLD_HEIGHT - 1 && worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y + 1].disToGoal < 999)
+			else if (m_agentNumber[i].current.y != WORLD_HEIGHT - 1 && worldBlocks[m_agentNumber[i].current.x][m_agentNumber[i].current.y + 1].disToGoal < 999)
 			{
-				agentNumber[i].currentDirection = Direction::down;
+				m_agentNumber[i].currentDirection = Direction::down;
 			}
-			else if (agentNumber[i].current.x != 0 && worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y - 1].disToGoal < 999)
+			else if (m_agentNumber[i].current.x != 0 && worldBlocks[m_agentNumber[i].current.x][m_agentNumber[i].current.y - 1].disToGoal < 999)
 			{
-				agentNumber[i].currentDirection = Direction::up;
+				m_agentNumber[i].currentDirection = Direction::up;
 			}
 			moveSingleAgent(i);
 		}
@@ -160,52 +160,25 @@ void MultiAgentHandler::adjacentPathFunc()
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		if (agentNumber[i].path.size() == 0)//true if agent doesn't have a path yet or finished
+		if (m_agentNumber[i].path.size() == 0)//true if agent doesn't have a path yet or finished
 		{
-			if (agentNumber[i].current == agentNumber[i].endGoal)//if agent has made it to goal
+			if (m_agentNumber[i].current == m_agentNumber[i].endGoal)//if agent has made it to goal
 			{
- 				worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].passable = false;//makes finished agents obstacles
+ 				worldBlocks[m_agentNumber[i].endGoal.x][m_agentNumber[i].endGoal.y].passable = false;//makes finished agents obstacles
 			}
 			else
 			{
 				findPath(i);//creates a path with a numberd grid for the passed in agent number
-				for (int i2 = 0; i2 < i; i2++)//loops through all previous agents
-				{
-					int pathLength = 0;//keeps track which tick we are dealing with
-					//true while neither agent has made it to their goals and aren't the same agent
-					while (pathLength < agentNumber[i].path.size() && pathLength < agentNumber[i2].path.size() && i != i2)
-					{
-						if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||//true if both agents will move into the same square
-							(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))//true if first agent plans to move into another agents square
-						{
-							Blocker temp;
-							temp.pathDis = worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal - pathLength-1;
-							temp.block = agentNumber[i].path.at(pathLength);
-							temp.next = false;
-							temp.whichAgents = sf::Vector2i(i,i2);
-							if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength))
-							{
-								temp.next = true;
-							}
-							agentNumber[i].blockers.push_back(temp);
-							agentNumber[i].path.clear();
-							i--;
-							i2 = i;
-							pathLength = 99;
-						}
-						pathLength++;
-					}
-				}
 			}
 		}
 	}
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		if (agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() != 0)
+		if (m_agentNumber[i].current != m_agentNumber[i].endGoal && m_agentNumber[i].path.size() != 0)
 		{
-			agentNumber[i].current = agentNumber[i].path.front();
-			agentNumber[i].path.erase(agentNumber[i].path.begin());
-			agentNumber[i].setPos();//sets agent off current
+			m_agentNumber[i].current = m_agentNumber[i].path.front();
+			m_agentNumber[i].path.erase(m_agentNumber[i].path.begin());
+			m_agentNumber[i].setPos();//sets agent off current
 		}
 	}
 }
@@ -214,26 +187,30 @@ void MultiAgentHandler::optimalPathFunc()
 {
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		if (agentNumber[i].path.size() == 0)
+		if (m_agentNumber[i].path.size() == 0)
 		{
-			if (agentNumber[i].current == agentNumber[i].endGoal)//if agent has made it to goal
+			if (m_agentNumber[i].current == m_agentNumber[i].endGoal)//if agent has made it to goal
 			{
-				worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].passable = false;//makes finished agents obstacles
+				worldBlocks[m_agentNumber[i].endGoal.x][m_agentNumber[i].endGoal.y].passable = false;//makes finished agents obstacles
 			}
 			else
 			{
 				findPath(i);//creates a path with a numberd grid for the passed in agent number
+				if (i == MAX_AGENTS-1)//has it done once per run after all agents have a desired path
+				{
+					redoPath();
+				}
 			}
 		}
 	}
-	redoPath();
+	//moves agents based off their paths
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		if (agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() != 0)
+		if (m_agentNumber[i].current != m_agentNumber[i].endGoal && m_agentNumber[i].path.size() != 0)
 		{
-			agentNumber[i].current = agentNumber[i].path.front();
-			agentNumber[i].path.erase(agentNumber[i].path.begin());
-			agentNumber[i].setPos();//sets agent off current
+			m_agentNumber[i].current = m_agentNumber[i].path.front();
+			m_agentNumber[i].path.erase(m_agentNumber[i].path.begin());
+			m_agentNumber[i].setPos();//sets agent off current
 		}
 	}
 }
@@ -247,40 +224,28 @@ void MultiAgentHandler::redoPath()
 		{
 			int pathLength = 0;//keeps track which tick we are dealing with
 			//true while neither agent has made it to their goals and aren't the same agent
-			while (pathLength < agentNumber[i].path.size() && pathLength < agentNumber[i2].path.size() && i != i2)
+			while (pathLength < m_agentNumber[i].path.size() && pathLength < m_agentNumber[i2].path.size() && i != i2)
 			{
-				if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength) ||
-					(pathLength > 0 && agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength - 1)))
-				{
+				if (m_agentNumber[i].path.at(pathLength) == m_agentNumber[i2].path.at(pathLength) ||//true if both agents will move into the same square
+					(pathLength > 0 && m_agentNumber[i].path.at(pathLength) == m_agentNumber[i2].path.at(pathLength - 1)))//true if first agent plans to move into another agents square
+				{//records the intersection
 					Blocker temp;
-					//temp.pathDis = agentNumber[i].path.size() - pathLength;
-					temp.block = agentNumber[i].path.at(pathLength);
-					//temp.next = false;
+					temp.block = m_agentNumber[i].path.at(pathLength);
 					temp.whichAgents = sf::Vector2i(i, i2);
-					if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(pathLength))
-					{
-						temp.next = true;
-					}
-					agentNumber[i].blockers.push_back(temp);
+					m_agentNumber[i].blockers.push_back(temp);
 					pathLength = 99;
 					anyBlockers = true;
 				}
 				pathLength++;
 			}
-			while (pathLength < agentNumber[i].path.size() && i != i2 && agentNumber[i2].path.size()>0)
+			while (pathLength < m_agentNumber[i].path.size() && i != i2 && m_agentNumber[i2].path.size()>0)//stops paths going through finished agents
 			{
-				if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(agentNumber[i2].path.size()-1))
+				if (m_agentNumber[i].path.at(pathLength) == m_agentNumber[i2].path.at(m_agentNumber[i2].path.size()-1))
 				{
 					Blocker temp;
-					temp.pathDis = agentNumber[i].path.size() - pathLength;
-					temp.block = agentNumber[i].path.at(pathLength);
-					temp.next = false;
+					temp.block = m_agentNumber[i].path.at(pathLength);
 					temp.whichAgents = sf::Vector2i(i, i2);
-					if (agentNumber[i].path.at(pathLength) == agentNumber[i2].path.at(agentNumber[i2].path.size() - 1))
-					{
-						temp.next = true;
-					}
-					agentNumber[i].blockers.push_back(temp);
+					m_agentNumber[i].blockers.push_back(temp);
 				}
 				pathLength++;
 			}
@@ -288,70 +253,77 @@ void MultiAgentHandler::redoPath()
 	}
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		if (agentNumber[i].blockers.size() > 0)
+		if (m_agentNumber[i].blockers.size() > 0)//only agents with blockers
 		{
-			int shortestDistance = agentNumber[i].path.size();
-			agentNumber[i].path.clear();
-			findPath(i);
-			if (shortestDistance == agentNumber[i].path.size())
+			int shortestDistance = m_agentNumber[i].path.size();
+			m_agentNumber[i].path.clear();
+			findPath(i);//finds new path for 'i' with blockers
+			if (shortestDistance == m_agentNumber[i].path.size())//true if blockers don't increase time
 			{
-				for (auto blocker : agentNumber[i].blockers)
+				for (auto blocker : m_agentNumber[i].blockers)
 				{
+					//removes blockers from other agents associated with 'i'
 					std::vector<Blocker> newVector;
-					for (auto blocker2 : agentNumber[blocker.whichAgents.y].blockers)
+					for (auto blocker2 : m_agentNumber[blocker.whichAgents.y].blockers)
 					{
 						if (blocker2.whichAgents.y != i)
 						{
 							newVector.push_back(blocker2);
 						}
 					}
-					agentNumber[blocker.whichAgents.y].blockers.clear();
-					agentNumber[blocker.whichAgents.y].blockers = newVector;
+					m_agentNumber[blocker.whichAgents.y].blockers.clear();
+					m_agentNumber[blocker.whichAgents.y].blockers = newVector;
 				}
-				agentNumber[i].blockers.clear();
+				m_agentNumber[i].blockers.clear();
 			}
 			else
 			{
-				int i2 = agentNumber[i].blockers.at(0).whichAgents.y;
-				int shortestDistance2 = agentNumber[i2].path.size();
-				agentNumber[i2].path.clear();
-				findPath(i2);
-				if (shortestDistance + agentNumber[i2].path.size() <= agentNumber[i].path.size() + shortestDistance2)
+				while (m_agentNumber[i].blockers.size() > 0)//loops through all blockers
 				{
-					agentNumber[i].blockers.clear();
-					agentNumber[i].path.clear();
-					findPath(i);
-					std::vector<Blocker> newVector;
-					for (auto blocker2 : agentNumber[i2].blockers)
-					{
-						if (blocker2.whichAgents.y != i)
-						{
-							newVector.push_back(blocker2);
-						}
-					}
-					agentNumber[i2].blockers.clear();
-					agentNumber[i2].blockers = newVector;
-				}
-				else
-				{
-					std::vector<Blocker> newVector;
-					for (auto blocker2 : agentNumber[i2].blockers)
-					{
-						if (blocker2.whichAgents.y != i)
-						{
-							newVector.push_back(blocker2);
-						}
-					}
-					agentNumber[i2].blockers.clear();
-					agentNumber[i2].blockers = newVector;
-					agentNumber[i2].path.clear();
+					int i2 = m_agentNumber[i].blockers.at(0).whichAgents.y;//gets the index of first blocker agent
+					int shortestDistance2 = m_agentNumber[i2].path.size();
+					m_agentNumber[i2].path.clear();
 					findPath(i2);
-					agentNumber[i].blockers.erase(agentNumber[i].blockers.begin());
+					//compares which altered path is worst for overall time
+					if (shortestDistance + m_agentNumber[i2].path.size() <= m_agentNumber[i].path.size() + shortestDistance2
+						&& !m_agentNumber[i2].blockers.empty())//incase of finished agents
+					{
+						//removes first blocker for 'i' and re does the path
+						m_agentNumber[i].blockers.erase(m_agentNumber[i].blockers.begin());
+						m_agentNumber[i].path.clear();
+						findPath(i);
+						std::vector<Blocker> newVector;//removes 'i' blocker from 'i2'
+						for (auto blocker2 : m_agentNumber[i2].blockers)
+						{
+							if (blocker2.whichAgents.y != i)
+							{
+								newVector.push_back(blocker2);
+							}
+						}
+						m_agentNumber[i2].blockers.clear();
+						m_agentNumber[i2].blockers = newVector;
+					}
+					else
+					{
+						std::vector<Blocker> newVector;//removes 'i' blocker from 'i2'
+						for (auto blocker2 : m_agentNumber[i2].blockers)
+						{
+							if (blocker2.whichAgents.y != i)
+							{
+								newVector.push_back(blocker2);
+							}
+						}
+						m_agentNumber[i2].blockers.clear();
+						m_agentNumber[i2].blockers = newVector;
+						m_agentNumber[i2].path.clear();
+						findPath(i2);//re does the path and removes first blocker for 'i'
+						m_agentNumber[i].blockers.erase(m_agentNumber[i].blockers.begin());
+					}
 				}
 			}
 		}
 	}
-	if (anyBlockers)
+	if (anyBlockers)//if there was a blocker redoes test and handling
 	{
 		redoPath();
 	}
@@ -359,7 +331,7 @@ void MultiAgentHandler::redoPath()
 
 void MultiAgentHandler::findPath(int i)
 {
-	if (agentNumber[i].current != agentNumber[i].endGoal && agentNumber[i].path.size() == 0)//true if not at goal
+	if (m_agentNumber[i].current != m_agentNumber[i].endGoal && m_agentNumber[i].path.size() == 0)//true if not at goal
 	{
 		for (int width = 0; width < WORLD_WIDTH; width++)
 		{
@@ -368,21 +340,21 @@ void MultiAgentHandler::findPath(int i)
 				worldBlocks[width][height].disToGoal = 999;//sets distance to goal higher then can ever be
 			}
 		}
-		worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].passable = true;//current spot is free
-		worldBlocks[agentNumber[i].endGoal.x][agentNumber[i].endGoal.y].disToGoal = 0;//set goal to zero to base the rest of spots off
+		worldBlocks[m_agentNumber[i].current.x][m_agentNumber[i].current.y].passable = true;//current spot is free
+		worldBlocks[m_agentNumber[i].endGoal.x][m_agentNumber[i].endGoal.y].disToGoal = 0;//set goal to zero to base the rest of spots off
 		int currentDis = 0;//active distance we are dealing with
-		currentDis = numberGrid(currentDis, i,agentNumber[i].blockers);
+		currentDis = numberGrid(currentDis, i,m_agentNumber[i].blockers);
 
-		sf::Vector2i currentBlock = agentNumber[i].current;
+		sf::Vector2i currentBlock = m_agentNumber[i].current;
 		int distance = currentDis;
-		sf::Vector2i goal = agentNumber[i].endGoal;
+		sf::Vector2i goal = m_agentNumber[i].endGoal;
 		float bestDis = 99;
 		sf::Vector2i changeBlock = currentBlock;
 		sf::Vector2i checkBlock = changeBlock;
-		while (distance > 0)
+		while (distance > 0)//loops until goal is reached
 		{
 			currentBlock = changeBlock; 
-			for (int sides = 0; sides < 4; sides++)
+			for (int sides = 0; sides < 4; sides++)//goes through all connecting squares to find path
 			{
 				checkBlock = currentBlock;
 				switch (sides)
@@ -407,17 +379,17 @@ void MultiAgentHandler::findPath(int i)
 					float currentDis = sqrt(pow((checkBlock.x - goal.x), 2) + pow((checkBlock.y - goal.y), 2));
 					if (currentDis < bestDis || (currentDis == bestDis && rand()%2==0))
 					{
-						int index = worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal - distance;
-						if (agentNumber[i].path.size() <= index)
+						int index = worldBlocks[m_agentNumber[i].current.x][m_agentNumber[i].current.y].disToGoal - distance;
+						if (m_agentNumber[i].path.size() <= index)
 						{
-							agentNumber[i].path.push_back(sf::Vector2i(checkBlock.x, checkBlock.y));
+							m_agentNumber[i].path.push_back(sf::Vector2i(checkBlock.x, checkBlock.y));//sets 'checkBlock' to next on path
 						}
 						else
 						{
-							agentNumber[i].path.at(index) = sf::Vector2i(checkBlock.x, checkBlock.y);
+							m_agentNumber[i].path.at(index) = sf::Vector2i(checkBlock.x, checkBlock.y);//replaces part of the path with 'checkBlock'
 						}
 						bestDis = currentDis;
-						changeBlock = sf::Vector2i(checkBlock.x, checkBlock.y);
+						changeBlock = sf::Vector2i(checkBlock.x, checkBlock.y);//sets next active to the one just checked
 					}
 				}
 			}
@@ -429,68 +401,68 @@ void MultiAgentHandler::findPath(int i)
 
 void MultiAgentHandler::simpleCheckVert(int i)
 {
-	if (agentNumber[i].current.y < agentNumber[i].endGoal.y &&//true if wants to move down
-		worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y + 1].passable)//true if can
+	if (m_agentNumber[i].current.y < m_agentNumber[i].endGoal.y &&//true if wants to move down
+		worldBlocks[m_agentNumber[i].current.x][m_agentNumber[i].current.y + 1].passable)//true if can
 	{
-		agentNumber[i].currentDirection = Direction::down;
+		m_agentNumber[i].currentDirection = Direction::down;
 	}
-	else if (agentNumber[i].current.y > agentNumber[i].endGoal.y&&//true if wants to move down
-		worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y - 1].passable)//true if can
+	else if (m_agentNumber[i].current.y > m_agentNumber[i].endGoal.y&&//true if wants to move down
+		worldBlocks[m_agentNumber[i].current.x][m_agentNumber[i].current.y - 1].passable)//true if can
 	{
-		agentNumber[i].currentDirection = Direction::up;
+		m_agentNumber[i].currentDirection = Direction::up;
 	}
 }
 
 void MultiAgentHandler::simpleCheckHorz(int i)
 {
-	if (agentNumber[i].current.x < agentNumber[i].endGoal.x &&//true if wants to move right
-		worldBlocks[agentNumber[i].current.x + 1][agentNumber[i].current.y].passable)//true if can
+	if (m_agentNumber[i].current.x < m_agentNumber[i].endGoal.x &&//true if wants to move right
+		worldBlocks[m_agentNumber[i].current.x + 1][m_agentNumber[i].current.y].passable)//true if can
 	{
-		agentNumber[i].currentDirection = Direction::right;
+		m_agentNumber[i].currentDirection = Direction::right;
 	}
-	else if (agentNumber[i].current.x > agentNumber[i].endGoal.x&&//true if wants to move left
-		worldBlocks[agentNumber[i].current.x - 1][agentNumber[i].current.y].passable)//true if can
+	else if (m_agentNumber[i].current.x > m_agentNumber[i].endGoal.x&&//true if wants to move left
+		worldBlocks[m_agentNumber[i].current.x - 1][m_agentNumber[i].current.y].passable)//true if can
 	{
-		agentNumber[i].currentDirection = Direction::left;
+		m_agentNumber[i].currentDirection = Direction::left;
 	}
 }
 
 void MultiAgentHandler::moveSingleAgent(int t_index)
 {
-	worldBlocks[agentNumber[t_index].current.x][agentNumber[t_index].current.y].passable = true;//current spot is free
-	switch (agentNumber[t_index].currentDirection)//moves agent based off decided direction
+	worldBlocks[m_agentNumber[t_index].current.x][m_agentNumber[t_index].current.y].passable = true;//current spot is free
+	switch (m_agentNumber[t_index].currentDirection)//moves agent based off decided direction
 	{
 	case right:
-		agentNumber[t_index].current.x++;
+		m_agentNumber[t_index].current.x++;
 		break;
 	case left:
-		agentNumber[t_index].current.x--;
+		m_agentNumber[t_index].current.x--;
 		break;
 	case up:
-		agentNumber[t_index].current.y--;
+		m_agentNumber[t_index].current.y--;
 		break;
 	case down:
-		agentNumber[t_index].current.y++;
+		m_agentNumber[t_index].current.y++;
 		break;
 	case stay:
 		break;
 	default:
 		break;
 	}
-	worldBlocks[agentNumber[t_index].current.x][agentNumber[t_index].current.y].passable = false;//new current spot is blocked
-	agentNumber[t_index].setPos();//sets agent off current
+	worldBlocks[m_agentNumber[t_index].current.x][m_agentNumber[t_index].current.y].passable = false;//new current spot is blocked
+	m_agentNumber[t_index].setPos();//sets agent off current
 }
 
 void MultiAgentHandler::setUpAgent(sf::Vector2i t_start, sf::Vector2i t_end, sf::Font* t_font, int index)
 {
-	agentNumber[index].setUp(t_start, t_end, t_font, index);
+	m_agentNumber[index].setUp(t_start, t_end, t_font, index);
 }
 
 int MultiAgentHandler::numberGrid(int currentDis, int i, std::vector<Blocker> t_blockers)
 {
-	while (currentDis < worldBlocks[agentNumber[i].current.x][agentNumber[i].current.y].disToGoal)//true if start is larger then current distance
+	while (currentDis < worldBlocks[m_agentNumber[i].current.x][m_agentNumber[i].current.y].disToGoal)//true if start is larger then current distance
 	{
-		for (auto eachBlock : agentNumber[i].blockers)
+		for (auto eachBlock : m_agentNumber[i].blockers)
 		{
 			if (currentPattern != numberAdjacent)
 			{
@@ -526,7 +498,7 @@ int MultiAgentHandler::numberGrid(int currentDis, int i, std::vector<Blocker> t_
 				}
 			}
 		}
-		for (auto eachBlock : agentNumber[i].blockers)
+		for (auto eachBlock : m_agentNumber[i].blockers)
 		{
 			if (currentPattern != numberAdjacent)/*(eachBlock.next && currentDis == eachBlock.pathDis-2)
 				|| (eachBlock.next && currentDis == eachBlock.pathDis - 1))*/
@@ -544,14 +516,14 @@ bool MultiAgentHandler::allAtGoal()
 	bool allHome = true;
 	for (int i = 0; i < MAX_AGENTS&& allHome; i++)
 	{
-		if (!agentNumber[i].atGoal())
+		if (!m_agentNumber[i].atGoal())
 		{
 			allHome = false;
 		}
 	}
 	return allHome;
 }
-
+//allows the pattern to change during runtime
 void MultiAgentHandler::changePath(bool t_increase)
 {
 	if (t_increase)
@@ -632,7 +604,7 @@ float MultiAgentHandler::averagePathSize()
 	float average = 0.0f;
 	for (int i = 0; i < MAX_AGENTS; i++)
 	{
-		average += agentNumber[i].pathSize;
+		average += m_agentNumber[i].pathSize;
 	}
 	return average/ MAX_AGENTS;
 }

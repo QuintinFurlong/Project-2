@@ -1,9 +1,13 @@
-﻿  Multi-agentHandler.cpp
-C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(176,24): warning C4018: '<': signed/unsigned mismatch
-C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(176,67): warning C4018: '<': signed/unsigned mismatch
-C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(250,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(250,65): warning C4018: '<': signed/unsigned mismatch
-C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(270,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(407,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(411,38): warning C4018: '<=': signed/unsigned mismatch
+﻿  Game.cpp
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Game.cpp(18,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Game.cpp(156,98): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Multi-agentHandler.cpp
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Game.cpp(156,71): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(227,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(227,67): warning C4018: '<': signed/unsigned mismatch
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(241,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(379,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  main.cpp
+  Generating Code...
+C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Multi-agent pathfinding\Multi-agentHandler.cpp(383,40): warning C4018: '<=': signed/unsigned mismatch
   Multi-agent pathfinding.vcxproj -> C:\Users\admin\Documents\GitHub\Project-2\Multi-agent pathfinding\Debug\Multi-agent pathfinding.exe
