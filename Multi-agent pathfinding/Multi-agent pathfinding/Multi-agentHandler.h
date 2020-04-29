@@ -21,8 +21,8 @@ public:
 	static const int WORLD_WIDTH = 24;
 	static const int WORLD_HEIGHT = 16;
 
-	WorldBlock worldBlocks[WORLD_WIDTH][WORLD_HEIGHT];
-	MovePatterns currentPattern;
+	WorldBlock m_worldBlocks[WORLD_WIDTH][WORLD_HEIGHT];
+	MovePatterns m_currentPattern;
 
 	MultiAgentHandler();
 	void setPattern(MovePatterns t_move);

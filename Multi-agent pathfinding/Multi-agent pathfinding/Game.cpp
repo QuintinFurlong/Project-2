@@ -153,12 +153,12 @@ void Game::setupWorldAndAgents()
 	{
 		for (int height = 0; height < aHandler.WORLD_HEIGHT; height++)
 		{
-			aHandler.worldBlocks[width][height].square.setPosition((width + 1) * BLOCK_SIZE, (height + 1) * BLOCK_SIZE);
-			aHandler.worldBlocks[width][height].square.setSize(sf::Vector2f(BLOCK_SIZE-1, BLOCK_SIZE-1));
-			aHandler.worldBlocks[width][height].square.setFillColor(sf::Color::Green);
-			aHandler.worldBlocks[width][height].square.setOutlineThickness(1);
-			aHandler.worldBlocks[width][height].square.setOutlineColor(sf::Color::Black);
-			aHandler.worldBlocks[width][height].passable = true;
+			aHandler.m_worldBlocks[width][height].square.setPosition((width + 1) * BLOCK_SIZE, (height + 1) * BLOCK_SIZE);
+			aHandler.m_worldBlocks[width][height].square.setSize(sf::Vector2f(BLOCK_SIZE-1, BLOCK_SIZE-1));
+			aHandler.m_worldBlocks[width][height].square.setFillColor(sf::Color::Green);
+			aHandler.m_worldBlocks[width][height].square.setOutlineThickness(1);
+			aHandler.m_worldBlocks[width][height].square.setOutlineColor(sf::Color::Black);
+			aHandler.m_worldBlocks[width][height].passable = true;
 		}
 	}
 	//sets positions, goals and label for each agent
@@ -174,20 +174,20 @@ void Game::setupWorldAndAgents()
 	aHandler.setUpAgent(sf::Vector2i(15, 15), sf::Vector2i(10, 15), &m_ArialBlackfont, 9);
 
 	//sets up obstacles
-	aHandler.worldBlocks[3][15].passable = false;
-	aHandler.worldBlocks[3][14].passable = false;
-	aHandler.worldBlocks[11][2].passable = false;
-	aHandler.worldBlocks[12][3].passable = false;
-	aHandler.worldBlocks[4][4].passable = false;
-	aHandler.worldBlocks[4][5].passable = false;
-	aHandler.worldBlocks[4][6].passable = false;
-	aHandler.worldBlocks[4][7].passable = false;
-	aHandler.worldBlocks[4][8].passable = false;
-	aHandler.worldBlocks[6][4].passable = false;
-	aHandler.worldBlocks[6][5].passable = false;
-	aHandler.worldBlocks[6][6].passable = false;
-	aHandler.worldBlocks[6][7].passable = false;
-	aHandler.worldBlocks[6][8].passable = false;
-	aHandler.worldBlocks[5][3].passable = false;
-	aHandler.worldBlocks[5][2].passable = false;
+	aHandler.m_worldBlocks[3][15].passable = false;
+	aHandler.m_worldBlocks[3][14].passable = false;
+	aHandler.m_worldBlocks[11][2].passable = false;
+	aHandler.m_worldBlocks[12][3].passable = false;
+	aHandler.m_worldBlocks[4][4].passable = false;
+	aHandler.m_worldBlocks[4][5].passable = false;
+	aHandler.m_worldBlocks[4][6].passable = false;
+	aHandler.m_worldBlocks[4][7].passable = false;
+	aHandler.m_worldBlocks[4][8].passable = false;
+	aHandler.m_worldBlocks[6][4].passable = false;
+	aHandler.m_worldBlocks[6][5].passable = false;
+	aHandler.m_worldBlocks[6][6].passable = false;
+	aHandler.m_worldBlocks[6][7].passable = false;
+	aHandler.m_worldBlocks[6][8].passable = false;
+	aHandler.m_worldBlocks[5][3].passable = false;
+	aHandler.m_worldBlocks[5][2].passable = false;
 }
